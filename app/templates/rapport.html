@@ -1,0 +1,118 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport</title>
+    <link rel="stylesheet" href="/static/css/rapport.css">
+</head>
+<body>
+    <div class="ligne-verticale"></div>
+    <div class="container-Bar">
+        <div class="sp"><span class="sp1">Ryvix</span><Span class="sp2">Lab</Span></div>
+        <div class="tite">Découvrir</div>
+        <div>
+            <a href="acceuil.html"><div class="mini-Con">
+                <div><img class="ico" src="/static/images/imageHome.png" alt=""></div>
+                <div class="text-mini">Acceuil</div>
+            </div></a>
+            <a href="resultat.Html"><div class="mini-Con">
+                <div><img class="ico" src="/static/images/search.png" alt=""></div>
+                <div class="text-mini">Recherche</div>
+            </div></a>
+            <a href="rapport.html"><div class="mini-Conselect">
+                <div><img class="ico" src="/static/images/rapport (1).png" alt=""></div>
+                <div class="text-mini">Rapport</div>
+            </div></a>
+            <a href="Tableau.html"><div class="mini-Con">
+                <div><img class="ico" src="/static/images/statisctics.png" alt=""></div>
+                <div class="text-mini">Tableau de bord</div>
+            </div></a>
+        </div>
+        <div class="tite">Autres</div>
+        <a href="paramettre.html"><div class="mini-Con">
+            <div><img class="ico" src="/static/images/Paramettre.png" alt=""></div>
+            <div class="text-mini">Paramettre App</div>
+        </div></a>
+        <div class="cont-bas">
+            <div class="mini-Con">
+                <div><img class="ico" src="/static/images/user.png" alt=""></div>
+                <div id="Utilisateur-conect" class="text-mini">Adema</div>
+            </div>
+            <a href="index.html"><div class="mini-Con">
+                <div><img class="ico" src="/static/images/turn-off.png" alt=""></div>
+                <div class="text-mini">Deconnexion</div>
+            </div></a>
+        </div>
+    </div>
+   <div class="GrandTitre">
+        <div class="Titre-Form">Rapport</div>
+   </div>
+
+<div class="flexpatient">
+                    <span class="sp-titre">Date</span>
+                    <div><input id="id-Date_de_naissance" placeholder="Date" type="text" class="inp-nom"></div>
+                </div>
+        <div class="Container-info">
+            <div class="container-liste-analyse">
+                <h4>Listes des patients disponible</h4>
+                <div class="conteneur-tableau">
+                    <table class="tableau-analyses">
+                    <thead>
+                        <tr>
+                        <th>Id Patient</th>
+                        <th>Liste de patient</th>
+                        <th>Lieu de N</th>
+                        <th>Adresse</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                        <tr>
+                            <td>001</td>
+                            <td>Pierre Resimene</td>
+                            <td>Hinche</td>
+                            <td>#2,rue lwen</td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Pierre Resimene</td>
+                            <td>Thomonde</td>
+                            <td>#2,rue lwen</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="container-liste-analyse">
+                <h4>Listes des analyses a faire</h4>
+                <div class="conteneur-tableau1">
+                    <table class="tableau-analyses">
+                    <thead>
+                        <tr>
+                            <th>Analyse</th>
+                            <th>Prix</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                        <tr>
+                            <td>Bilan Thyroidien</td>
+                            <td>100,00 HTG</td>
+                        </tr>
+                        <tr>
+                            <td>Ionogramme</td>
+                            <td>500,00 HTG</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+<div class="message-overlay" id="alertBox">
+  <div class="message-box">
+    <img src="https://cdn-icons-png.flaticon.com/512/5959/5959627.png" alt="Attention" class="icon">
+    <p>Pour une expérience optimale, veuillez utiliser un appareil doté d'un écran plus large.</p>
+    <button>OK</button>
+  </div>
+</div>
+</body>
+</html>

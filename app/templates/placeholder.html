@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titre }} - RyvixLab{% endblock %}
+
+{% block content %}
+
+    <div class="GrandTitre">
+        <div class="Titre-Form">{{ titre }}</div>
+    </div>
+    
+    <div style="
+        max-width: 600px;
+        margin: 100px auto;
+        padding: 40px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        text-align: center;
+        font-family: Arial, sans-serif;
+    ">
+        <div style="font-size: 80px; margin-bottom: 20px;">🚧</div>
+        <h2 style="color: #2c3e50; margin-bottom: 15px;">
+            Page en construction
+        </h2>
+        <p style="color: #7f8c8d; line-height: 1.6;">
+            La page <strong>{{ titre }}</strong> sera disponible prochainement.<br>
+            Elle est en cours de développement.
+        </p>
+        <p style="margin-top: 30px;">
+            <a href="{{ url_for('main.acceuil') }}" style="
+                display: inline-block;
+                padding: 12px 30px;
+                background: #3498db;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                font-weight: bold;
+            ">
+                ← Retour à l'accueil
+            </a>
+        </p>
+    </div>
+
+{% endblock %}

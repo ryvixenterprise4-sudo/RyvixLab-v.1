@@ -1,0 +1,34 @@
+<!--
+    Barre de navigation secondaire pour le module Analyses.
+    
+    Variable {{ sub_active }} pour mettre en évidence l'onglet actif :
+    - 'analyse' | 'configuration' | 'resultat' | 'impression'
+-->
+
+<div class="dvAnle">
+    <div class="barre">
+        <a href="{{ url_for('analyse.ajout_analyse') }}">
+            <div class="{{ 'textBarre1' if sub_active == 'analyse' else 'textBarre' }}">
+                Analyse
+            </div>
+        </a>
+        
+        <a href="{{ url_for('analyse.configuration') }}">
+            <div class="{{ 'textBarre1' if sub_active == 'configuration' else 'textBarre' }}">
+                Configuration
+            </div>
+        </a>
+        
+        <a href="#" onclick="alert('Page à venir'); return false;">
+            <div class="{{ 'textBarre1' if sub_active == 'resultat' else 'textBarre' }}">
+                Résultat
+            </div>
+        </a>
+        
+        <a href="#" onclick="alert('Page à venir'); return false;">
+            <div class="{{ 'textBarre1' if sub_active == 'impression' else 'textBarre' }}">
+                Impression
+            </div>
+        </a>
+    </div>
+</div>

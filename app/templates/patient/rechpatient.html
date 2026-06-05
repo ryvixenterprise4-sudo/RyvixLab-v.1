@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+
+{% block title %}Patients - RyvixLab{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rechpatient.css') }}">
+    
+    <!-- CSS de la modal intégré (garantie de chargement) -->
+    <style>
+        #modalModifPatient { display: none !important; }
+        
+        #modalModifPatient.show {
+            display: flex !important;
+            position: fixed !important;
+            top: 0 !important; left: 0 !important;
+            right: 0 !important; bottom: 0 !important;
+            width: 100vw !important; height: 100vh !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+            z-index: 999999 !important;
+            justify-content: center !important;
+            align-items: center !important;
+            padding: 20px !important;
+            box-sizing: border-box !important;
+            backdrop-filter: blur(4px);
+        }
+        
+        #modalModifPatient .modal-content {
+            background: white !important;
+            padding: 30px 35px !important;
+            border-radius: 12px !important;
+            max-width: 650px !important;
+            width: 100% !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        
+        #modalModifPatient .modal-content h3 {
+            margin: 0 0 25px 0 !important;
+            color: #2c3e50 !important;
+            font-size: 22px !important;
+            padding-bottom: 15px !important;
+            border-bottom: 2px solid #f0f0f0 !important;
+        }
+        
+        #modalModifPatient .modal-content label {
+            display: block !important;
+            margin: 14px 0 6px 0 !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #2c3e50 !important;
+        }
+        
+        #modalModifPatient .modal-content .inp-nom {
+            width: 100% !important;
+            padding: 10px 14px !important;
+            border: 1.5px solid #ddd !important;
+            border-radius: 6px !important;
+            font-size: 14px !important;
+            box-sizing: border-box !important;
+        }
+        
+        #modalModifPatient .modal-row {
+            display: flex !important;
+            gap: 15px !important;
+        }
+        
+        #modalModifPatient .modal-row > div { flex: 1 !important; }
+        
+        #modalModifPatient .modal-actions {
+            display: flex !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            margin-top: 30px !important;
+            padding-top: 20px !important;
+            border-top: 2px solid #f0f0f0 !important;
+        }
+        
+        #modalModifPatient .btn-cancel,
+        #modalModifPatient .btn-save {
+            padding: 11px 24px !important;
+            border: none !important;
+            border-radius: 6px !important;
+            cursor: pointer !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+        }
+        
+        #modalModifPatient .btn-cancel { background: #ecf0f1 !important; color: #555 !important; }
+        #modalModifPatient .btn-save { background: #2ecc71 !important; color: white !important; }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="dvAnle">
+        <div class="barre">
+            <div class="textBarre1">Recherche</div>
+            <a href="{{ url_for('main.enregistrement') }}">
+                <div class="textBarre">Enregistrement</div>
+            </a>
+            <a href="{{ url_for('main.resultat') }}">
+                <div class="textBarre">Résultat</div>
+            </a>
+        </div>
+    </div>
+    
+    <div class="GrandTitre">
+        <div class="Titre-Form">Patients</div>
+    </div>
+
+    <div class="container">
+        <h3>🔍 Recherche</h3>
+        
+        <form method="GET" action="{{ url_for('patient.liste') }}" class="con-filtre">
+            <div class="container-rech">
+                <span class="icon-rech">🔍</span>
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ recherche }}"
+                    placeholder="Entrer le code, nom, ou téléphone..."
+                    class="inp-rech"
+                >
+            </div>
+            
+            <select name="sexe" class="select-filtre">
+                <option value="" disabled selected>Tous les sexes</option>
+                <option value="M" {% if sexe_filtre == 'M' %}selected{% endif %}>Homme</option>
+                <option value="F" {% if sexe_filtre == 'F' %}selected{% endif %}>Femme</option>
+            </select>
+            
+            <button type="submit" class="btn-filtrer">
+                Filtrer
+            </button>
+            
+            {% if recherche or sexe_filtre %}
+                <a href="{{ url_for('patient.liste') }}" class="btn-clear">
+                    ✕ Effacer
+                </a>
+            {% endif %}
+        </form>
+        
+        <hr>
+        
+        <div class="container-bas">
+            <div class="container-liste-analyse">
+                <h4>Liste des patients <span class="counter">({{ patients|length }})</span></h4>
+                
+                <div class="conteneur-tableau">
+                    {% if patients %}
+                    <table class="tableau-analyses">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Nom complet</th>
+                                <th>Date de N.</th>
+                                <th>Lieu de N.</th>
+                                <th>Adresse</th>
+                                <th>Sexe</th>
+                                <th>Téléphone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr>
+                                <td><strong>{{ patient.code }}</strong></td>
+                                <td>{{ patient.nom_complet }}</td>
+                                <td>
+                                    {{ patient.date_naissance.strftime('%d/%m/%Y') if patient.date_naissance else '-' }}
+                                </td>
+                                <td>{{ patient.lieu_naissance or '-' }}</td>
+                                <td>{{ patient.adresse or '-' }}</td>
+                                <td>
+                                    {% if patient.sexe == 'M' %}
+                                        <span class="badge-sexe-m">♂ H</span>
+                                    {% elif patient.sexe == 'F' %}
+                                        <span class="badge-sexe-f">♀ F</span>
+                                    {% else %}-{% endif %}
+                                </td>
+                                <td>{{ patient.telephone or '-' }}</td>
+                                <td class="actions">
+                                <!-- 🆕 BOUTON ENREGISTRER UN EXAMEN POUR CE PATIENT -->
+                                
+                                <a   href="{{ url_for('examen.enregistrement', patient_id=patient.id) }}"
+                                    class="btn-action btn-enregistrer-examen"
+                                    title="Enregistrer un examen pour ce patient"
+                                >
+                                    ➕
+                                </a>
+                                
+                                <button
+                                    type="button"
+                                    class="btn-action btn-edit btn-ouvrir-modif-patient"
+                                    data-id="{{ patient.id }}"
+                                    data-nom="{{ patient.nom_complet }}"
+                                    data-dn="{{ patient.date_naissance.strftime('%Y-%m-%d') if patient.date_naissance else '' }}"
+                                    data-ln="{{ patient.lieu_naissance or '' }}"
+                                    data-adresse="{{ patient.adresse or '' }}"
+                                    data-sexe="{{ patient.sexe or '' }}"
+                                    data-tel="{{ patient.telephone or '' }}"
+                                    data-email="{{ patient.email or '' }}"
+                                    title="Modifier"
+                                >
+                                    ✏️
+                                </button>
+                                
+                                {% if current_user.is_admin() %}
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('patient.supprimer', patient_id=patient.id) }}"
+                                    style="display:inline"
+                                    onsubmit="return confirm('⚠️ Supprimer ce patient et TOUS ses examens ?');"
+                                >
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button class="btn-action btn-delete" title="Supprimer">🗑️</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-state">
+                        <p>🔍 Aucun patient trouvé.</p>
+                        <p>
+                            <a href="{{ url_for('examen.enregistrement') }}" class="btn-link">
+                                ➕ Enregistrer un nouveau patient
+                            </a>
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ===== MODAL DE MODIFICATION ===== -->
+    <div id="modalModifPatient" class="modal-overlay">
+        <div class="modal-content">
+            <h3> Modifier le patient</h3>
+            <form id="formModifPatient" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <label>Nom complet *</label>
+                <input type="text" name="nom_complet" id="mp-nom" class="inp-nom" required>
+                
+                <div class="modal-row">
+                    <div>
+                        <label>Date de naissance</label>
+                        <input type="date" name="date_naissance" id="mp-dn" class="inp-nom">
+                    </div>
+                    <div>
+                        <label>Sexe</label>
+                        <select name="sexe" id="mp-sexe" class="inp-nom">
+                            <option value="">-- Non spécifié --</option>
+                            <option value="M">Homme</option>
+                            <option value="F">Femme</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <label>Lieu de naissance</label>
+                <input type="text" name="lieu_naissance" id="mp-ln" class="inp-nom">
+                
+                <label>Adresse</label>
+                <input type="text" name="adresse" id="mp-adresse" class="inp-nom">
+                
+                <div class="modal-row">
+                    <div>
+                        <label>Téléphone</label>
+                        <input type="text" name="telephone" id="mp-tel" class="inp-nom">
+                    </div>
+                    <div>
+                        <label>Email</label>
+                        <input type="email" name="email" id="mp-email" class="inp-nom">
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" id="btnFermerModifPatient" class="btn-cancel">Annuler</button>
+                    <button type="submit" class="btn-save"> Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('modalModifPatient');
+        
+        // Boutons d'ouverture
+        document.querySelectorAll('.btn-ouvrir-modif-patient').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('mp-nom').value = this.dataset.nom || '';
+                document.getElementById('mp-dn').value = this.dataset.dn || '';
+                document.getElementById('mp-ln').value = this.dataset.ln || '';
+                document.getElementById('mp-adresse').value = this.dataset.adresse || '';
+                document.getElementById('mp-sexe').value = this.dataset.sexe || '';
+                document.getElementById('mp-tel').value = this.dataset.tel || '';
+                document.getElementById('mp-email').value = this.dataset.email || '';
+                
+                document.getElementById('formModifPatient').action = 
+                    '/patients/modifier/' + this.dataset.id;
+                
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        // Fermeture
+        function fermer() {
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        document.getElementById('btnFermerModifPatient').addEventListener('click', fermer);
+        modal.addEventListener('click', e => { if (e.target === modal) fermer(); });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && modal.classList.contains('show')) fermer();
+        });
+    });
+</script>
+{% endblock %}

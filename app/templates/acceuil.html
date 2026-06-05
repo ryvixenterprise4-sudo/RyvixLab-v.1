@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil - RyvixLab{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/acceuil.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <!-- Grand titre de la page -->
+    <div class="GrandTitre">
+        <div class="Titre-Form">Accueil</div>
+    </div>
+    
+    <!-- Conteneur principal avec les 3 grandes images -->
+    <div class="container">
+        <div class="container-acc">
+            
+            <!-- Carte ENREGISTRER -->
+            <a href="{{ url_for('main.enregistrement') }}">
+                <div class="image-hover-container">
+                    <img
+                        src="{{ url_for('static', filename='images/ImageEnregistrement.jpeg') }}"
+                        alt="Enregistrement"
+                        class="hover-image"
+                    >
+                    <div class="centered-text">
+                        <h2>ENREGISTRER</h2>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Carte ANALYSES -->
+            <a href="{{ url_for('main.ajout_analyse') }}">
+                <div class="image-hover-container">
+                    <img
+                        src="{{ url_for('static', filename='images/ImageAnalyse.webp') }}"
+                        alt="Analyses"
+                        class="hover-image"
+                    >
+                    <div class="centered-text">
+                        <h2>ANALYSES</h2>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Carte PATIENTS -->
+            <a href="{{ url_for('main.rech_patient') }}">
+                <div class="image-hover-container">
+                    <img
+                        src="{{ url_for('static', filename='images/ImagePatient.webp') }}"
+                        alt="Patients"
+                        class="hover-image"
+                    >
+                    <div class="centered-text">
+                        <h2>PATIENTS</h2>
+                    </div>
+                </div>
+            </a>
+            
+        </div>
+    </div>
+
+{% endblock %}

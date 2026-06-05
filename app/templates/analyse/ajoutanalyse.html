@@ -1,0 +1,402 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajout Analyses - RyvixLab{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ajoutanalyse.css') }}">
+    
+    <!-- CSS de la modal intégré -->
+    <style>
+        /* ===== MODAL OVERLAY ===== */
+        #modalModif {
+            display: none !important;
+        }
+        
+        #modalModif.show {
+            display: flex !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+            z-index: 999999 !important;
+            justify-content: center !important;
+            align-items: center !important;
+            padding: 20px !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            backdrop-filter: blur(4px);
+        }
+        
+        /* ===== MODAL CONTENT ===== */
+        #modalModif .modal-content {
+            background: white !important;
+            padding: 30px 35px !important;
+            border-radius: 12px !important;
+            max-width: 550px !important;
+            width: 100% !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+            position: relative !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+            animation: modalSlideIn 0.3s ease !important;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ===== TITRE ===== */
+        #modalModif .modal-content h3 {
+            margin: 0 0 25px 0 !important;
+            color: #2c3e50 !important;
+            font-size: 22px !important;
+            padding-bottom: 15px !important;
+            border-bottom: 2px solid #f0f0f0 !important;
+        }
+        
+        /* ===== LABELS ===== */
+        #modalModif .modal-content label {
+            display: block !important;
+            margin: 14px 0 6px 0 !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #2c3e50 !important;
+        }
+        
+        /* ===== INPUTS DANS LA MODAL ===== */
+        #modalModif .modal-content .inp-nom {
+            width: 100% !important;
+            padding: 10px 14px !important;
+            border: 1.5px solid #ddd !important;
+            border-radius: 6px !important;
+            font-size: 14px !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            font-family: inherit !important;
+            background: white !important;
+        }
+        
+        #modalModif .modal-content .inp-nom:focus {
+            border-color: #2ecc71 !important;
+            outline: none !important;
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1) !important;
+        }
+        
+        /* ===== ACTIONS (BOUTONS) ===== */
+        #modalModif .modal-actions {
+            display: flex !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            margin-top: 30px !important;
+            padding-top: 20px !important;
+            border-top: 2px solid #f0f0f0 !important;
+        }
+        
+        #modalModif .btn-cancel,
+        #modalModif .btn-save {
+            padding: 11px 24px !important;
+            border: none !important;
+            border-radius: 6px !important;
+            cursor: pointer !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            font-family: inherit !important;
+        }
+        
+        #modalModif .btn-cancel {
+            background: #ecf0f1 !important;
+            color: #555 !important;
+        }
+        
+        #modalModif .btn-cancel:hover {
+            background: #dfe4e6 !important;
+        }
+        
+        #modalModif .btn-save {
+            background: #2ecc71 !important;
+            color: white !important;
+        }
+        
+        #modalModif .btn-save:hover {
+            background: #27ae60 !important;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 700px) {
+            #modalModif .modal-content {
+                padding: 20px !important;
+                max-height: 95vh !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    {% include 'partials/nav_analyses.html' %}
+    
+    <div class="GrandTitre">
+        <div class="Titre-Form">Ajouter des Analyses</div>
+    </div>
+    
+    <div class="container">
+        <h3>Nouvelle Analyse</h3>
+        
+        <form class="Container-info" method="POST" action="{{ url_for('analyse.ajout_analyse') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="mini-conpatien">
+                <div class="flexpatient">
+                    <span class="sp-titre">Nom de l'analyse</span>
+                    <div>
+                        <input id="id-Nom" name="nom" type="text" class="inp-nom"
+                               placeholder="Ex: Hépatite B" required autofocus>
+                    </div>
+                </div>
+                
+                <div class="flexpatient">
+                    <span class="sp-titre">Service</span>
+                    <div>
+                        <input name="service" type="text" class="inp-nom"
+                               placeholder="Ex: Sérologie..." required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mini-conpatien">
+                <div class="flexpatient">
+                    <span class="sp-titre">Prix (HTG)</span>
+                    <div>
+                        <input name="prix" type="number" step="0.01" min="0"
+                               class="inp-nom" placeholder="Ex: 1000" required>
+                    </div>
+                </div>
+                
+                <div class="flexpatient">
+                    <span class="sp-titre">Description (optionnelle)</span>
+                    <div>
+                        <input name="description" type="text" class="inp-nom"
+                               placeholder="Description courte">
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <button type="submit" class="btn-enregistrement"> Ajouter</button>
+            </div>
+        </form>
+        
+        <hr>
+        
+        <!-- Barre de recherche -->
+        <form method="GET" action="{{ url_for('analyse.ajout_analyse') }}" class="form-recherche">
+            <div class="container-rech">
+                <span class="icon-rech">🔍</span>
+                <input type="text" name="q" value="{{ recherche }}"
+                       placeholder="Rechercher une analyse..." class="inp-rech">
+            </div>
+            <button type="submit" class="btn-search">Rechercher</button>
+            {% if recherche %}
+                <a href="{{ url_for('analyse.ajout_analyse') }}" class="btn-clear">✕ Effacer</a>
+            {% endif %}
+        </form>
+        
+        <!-- Liste des analyses -->
+        <div class="container-liste-analyse">
+            <h4>Liste des Services <span class="counter">({{ analyses|length }})</span></h4>
+            
+            <div class="conteneur-tableau">
+                {% if analyses %}
+                <table class="tableau-analyses">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Service</th>
+                            <th>Nom de l'analyse</th>
+                            <th>Prix</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for analyse in analyses %}
+                        <tr class="{{ 'ligne-inactive' if not analyse.actif }}">
+                            <td>{{ '%03d' % analyse.id }}</td>
+                            <td>{{ analyse.service or '-' }}</td>
+                            <td><strong>{{ analyse.nom }}</strong></td>
+                            <td>{{ '{:,.2f}'.format(analyse.prix) }} HTG</td>
+                            <td>
+                                {% if analyse.actif %}
+                                    <span class="badge badge-actif">Actif</span>
+                                {% else %}
+                                    <span class="badge badge-inactif">Inactif</span>
+                                {% endif %}
+                            </td>
+                            <td class="actions">
+                                <button
+                                    type="button"
+                                    class="btn-action btn-edit btn-ouvrir-modif"
+                                    data-id="{{ analyse.id }}"
+                                    data-nom="{{ analyse.nom }}"
+                                    data-service="{{ analyse.service or '' }}"
+                                    data-prix="{{ analyse.prix }}"
+                                    data-description="{{ analyse.description or '' }}"
+                                    title="Modifier"
+                                >
+                                    ✏️
+                                </button>
+                                
+                                {% if analyse.actif %}
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('analyse.supprimer_analyse', analyse_id=analyse.id) }}"
+                                    style="display:inline"
+                                    onsubmit="return confirm('Désactiver cette analyse ?');"
+                                >
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn-action btn-delete" title="Désactiver">🗑️</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <p>🔍 Aucune analyse trouvée.</p>
+                    <p>Utilisez le formulaire ci-dessus pour en ajouter.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+
+   <!-- ===== MODAL DE MODIFICATION ===== -->
+    <div id="modalModif" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Modifier l'analyse</h3>
+            <form id="formModif" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <label>Nom</label>
+                <input type="text" name="nom" id="mod-nom" class="inp-nom" required>
+                
+                <label>Service</label>
+                <input type="text" name="service" id="mod-service" class="inp-nom" required>
+                
+                <label>Prix (HTG)</label>
+                <input type="number" step="0.01" min="0" name="prix" id="mod-prix" class="inp-nom" required>
+                
+                <label>Description</label>
+                <input type="text" name="description" id="mod-description" class="inp-nom">
+                
+                <div class="modal-actions">
+                    <button type="button" id="btnFermerModif" class="btn-cancel">Annuler</button>
+                    <button type="submit" class="btn-save">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    // ===================================================
+    // OUVRIR / FERMER LA MODAL
+    // ===================================================
+    
+    function ouvrirModal() {
+        const modal = document.getElementById('modalModif');
+        if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            console.log('✅ Modal modif analyse ouverte');
+        }
+    }
+    
+    function fermerModal() {
+        const modal = document.getElementById('modalModif');
+        if (modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+            console.log('✅ Modal fermée');
+        }
+    }
+    
+    // ===================================================
+    // INITIALISATION
+    // ===================================================
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        console.log(' Script ajoutanalyse chargé');
+        
+        const modal = document.getElementById('modalModif');
+        console.log('Modal trouvée:', modal ? '✅' : '❌');
+        
+        // ============ BOUTONS D'ÉDITION ============
+        const boutons = document.querySelectorAll('.btn-ouvrir-modif');
+        console.log(`📋 ${boutons.length} bouton(s) ✏️ trouvé(s)`);
+        
+        boutons.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('🖱️ Click sur ✏️, ID:', this.dataset.id);
+                
+                // Pré-remplir les champs
+                document.getElementById('mod-nom').value = this.dataset.nom || '';
+                document.getElementById('mod-service').value = this.dataset.service || '';
+                document.getElementById('mod-prix').value = this.dataset.prix || '';
+                document.getElementById('mod-description').value = this.dataset.description || '';
+                
+                // Pointer le formulaire vers la bonne URL
+                document.getElementById('formModif').action = 
+                    '/analyses/modifier/' + this.dataset.id;
+                
+                // OUVRIR LA MODAL
+                ouvrirModal();
+            });
+        });
+        
+        // ============ FERMETURE ============
+        const btnFermer = document.getElementById('btnFermerModif');
+        if (btnFermer) {
+            btnFermer.addEventListener('click', fermerModal);
+        }
+        
+        if (modal) {
+            // Clic sur l'overlay (en dehors du contenu)
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) fermerModal();
+            });
+        }
+        
+        // Touche Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal && modal.classList.contains('show')) {
+                fermerModal();
+            }
+        });
+    });
+</script>
+{% endblock %}
+

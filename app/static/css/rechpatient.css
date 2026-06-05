@@ -1,0 +1,105 @@
+@import url('ajoutanalyse.css');
+
+/* Barre de filtres */
+.con-filtre {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 5px 0;
+    flex-wrap: wrap;
+}
+
+.select-filtre {
+    padding: 10px 14px;
+    border: 1.5px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 15px;
+    background: white;
+}
+
+.btn-filtrer {
+    padding: 10px 20px;
+    margin-top: 0px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-filtrer:hover {
+    background: #2980b9;
+}
+
+/* Badges sexe a arranger en flex*/
+.badge-sexe-m,
+.badge-sexe-f {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-sexe-m {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.badge-sexe-f {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.btn-link {
+    color: #2ecc71;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+/* ===== BOUTON ENREGISTRER UN EXAMEN ===== */
+.btn-enregistrer-examen {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    background: #2ecc71 !important;
+    color: white !important;
+    border: none;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    text-decoration: none !important;
+    font-size: 16px !important;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(46, 204, 113, 0.3);
+}
+
+.btn-enregistrer-examen:hover {
+    background: #27ae60 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(46, 204, 113, 0.4);
+}
+
+.btn-enregistrer-examen:active {
+    transform: translateY(0);
+}
+
+/* Espacement entre les boutons d'action */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Surcharge pour les autres boutons (cohérence visuelle) */
+.actions .btn-action {
+    padding: 8px 10px;
+    border-radius: 6px;
+    line-height: 1;
+}

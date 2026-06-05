@@ -1,0 +1,153 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultat Analyse</title>
+    <link rel="stylesheet" href="/static/css/resultatanalyse.css">
+</head>
+<body>
+    <div class="ligne-verticale"></div>
+    <div class="container-Bar">
+        <div class="sp"><span class="sp1">Ryvix</span><Span class="sp2">Lab</Span></div>
+        <div class="tite">Découvrir</div>
+        <div>
+            <a href="acceuil.html"><div class="mini-Con">
+                <div><img class="ico" src="/static/images/imageHome.png" alt=""></div>
+                <div class="text-mini">Acceuil</div>
+            </div></a>
+            <a href="resultat.html"><div class="mini-Conselect">
+                <div><img class="ico" src="/static/images/search.png" alt=""></div>
+                <div class="text-mini">Recherche</div>
+            </div></a>
+            <a href="rapport.html"><div class="mini-Con">
+                <div><img class="ico" src="/static/images/rapport (1).png" alt=""></div>
+                <div class="text-mini">Rapport</div>
+            </div></a>
+            <a href="Tableau.html"><div class="mini-Con">
+                <div><img class="ico" src="/static/images/statisctics.png" alt=""></div>
+                <div class="text-mini">Tableau de bord</div>
+            </div></a>
+        </div>
+        <div class="tite">Autres</div>
+        <a href="paramettre.html"><div class="mini-Con">
+            <div><img class="ico" src="/static/images/Paramettre.png" alt=""></div>
+            <div class="text-mini">Paramettre App</div>
+        </div></a>
+        <div class="cont-bas">
+            <div class="mini-Con">
+                <div><img class="ico" src="/static/images/user.png" alt=""></div>
+                <div id="Utilisateur-conect" class="text-mini">Adema</div>
+            </div>
+            <a href="index.html"><div class="mini-Con">
+                <div><img class="ico" src="/static/images/turn-off.png" alt=""></div>
+                <div class="text-mini">Deconnexion</div>
+            </div></a>
+        </div>
+    </div>
+    <div class="dvAnle">
+        <div class="barre">
+            <a href="ajoutanalyse.html"><div class="textBarre">Analyse</div></a>
+            <a href="ajoutlab.html"><div class="textBarre">Configuration</div></a>
+            <a href="resultatanalyse.html"><div class="textBarre1">Resultat</div></a>
+            <a href="impression.html"><div class="textBarre">Impression</div></a>
+        </div>
+    </div>
+   <div class="GrandTitre">
+        <div class="Titre-Form">Entrer des resultats</div>
+   </div>
+    <form class="flexpatient">
+        <span class="sp-titre">Date</span>
+        <div><input id="id-Date_de_naissance" placeholder="Date" type="text" class="inp-nom"></div>
+    </form>
+        <div class="Container-info">
+            <div class="container-liste-analyse">
+                <h4>Listes des patients disponible</h4>
+                <div class="conteneur-tableau">
+                    <table class="tableau-analyses">
+                    <thead>
+                        <tr>
+                        <th>Id Patient</th>
+                        <th>Patient</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                        <tr>
+                            <td>001</td>
+                            <td>Pierre Resimene</td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Jean Fabie</td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Joseph Dany</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="container-liste-analyse">
+                <h4>Listes des analyses a faire</h4>
+                <div class="conteneur-tableau1">
+                    <table class="tableau-analyses">
+                    <thead>
+                        <tr>
+                            <th>Analyse</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                        <tr>
+                            <td>Bilan Thyroidien</td>
+                        </tr>
+                        <tr>
+                            <td>Ionogramme</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div><button class="btn-enregistrement">Enregistrer</button></div>
+        <hr>
+        <div class="conteneur-tableau">
+                    <table class="tableau-analyses">
+                    <thead>
+                        <tr>
+                        <th>Paramètres</th>
+                        <th>Resultats</th>
+                        <th>Unités</th>
+                        <th>Valeur normal</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                        <tr>
+                            <td>Potassium</td>
+                            <td></td>
+                            <td>mEq/l</td>
+                            <td>3.5-5-5 mEq/l</td>
+                        </tr>
+                        <tr>
+                            <td>Calcium</td>
+                            <td></td>
+                            <td>mEq/l</td>
+                            <td>3.5-5-5 mEq/l</td>
+                        </tr>
+                        <tr>
+                            <td>Chlore</td>
+                            <td></td>
+                            <td>mEq/l</td>
+                            <td>3.5-5-5 mEq/l</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div> 
+<div class="message-overlay" id="alertBox">
+  <div class="message-box">
+    <img src="https://cdn-icons-png.flaticon.com/512/5959/5959627.png" alt="Attention" class="icon">
+    <p>Pour une expérience optimale, veuillez utiliser un appareil doté d'un écran plus large.</p>
+    <button>OK</button>
+  </div>
+</div>
+</body>
+</html>

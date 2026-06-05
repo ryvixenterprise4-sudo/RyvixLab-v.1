@@ -1,0 +1,579 @@
+:root {
+  /* Définition des couleurs */
+  --couleur-text: #25C0B8;
+  --couleur-bouton: #27C441;
+  --couleur-Back: #dddddd;
+  --fond-page: #ffffff;
+  --fond-barre: #f7f7f7;
+}
+body{
+    padding-left: 200px;
+    background-color: #ffffff;
+}
+
+a{
+    text-decoration: none;color: black;
+}
+.ligne-verticale {
+  border-left: 1px solid var(--couleur-Back);
+  height: 100%;
+  margin: 0 10px;
+  position: fixed;
+  left: 180;
+  top: 0;
+}
+.container-Bar{
+    position: fixed;
+    left: 5;
+}
+.sp{
+    margin-bottom: 25px;
+}
+.sp1{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bolder;
+    color:#27C441;
+    font-size:16px;
+}
+.sp2{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bolder;
+    color: black;
+    font-size:16px;
+}
+.tite{
+    font-size: 15px;
+    font-weight:bold;
+    margin: 10px 0px;
+}
+.mini-con{
+    border-radius: 5px;
+    height: 30px;
+    width: 160px;
+    display: flex;
+    align-items: center;
+    margin: 10px 0px;
+}
+.mini-con:hover{
+    cursor: pointer;
+    transition: 0.2s;
+    background-color: #f7f7f7;
+}
+.mini-con:active{
+    background-color:#D2D2D2;
+}
+.ico{
+    width: 25px;
+    margin: 0px 8px;
+}
+.text-mini{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+}
+.cont-bas{
+    position: fixed;
+    bottom: 0;
+}
+.grandTitre{
+    height: 100px;
+    display: flex;
+    align-items: center;
+}
+.Titre-Form{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 1px;
+    font-weight:bolder;
+    margin: 10px 0px;
+    color: var(--couleur-text);
+}
+.dvAnle{
+    padding-top: 5px;
+}
+.barre{
+    display: flex;
+    justify-content: space-between;
+    width: 350px;
+    padding: 2px;
+    background-color: var(--couleur-Back);
+    border-radius: 5px;
+    margin: 0px 0px;
+}
+.textBarre{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 17px;
+    padding: 5px 5px;
+    border-radius: 5px;
+}
+.textBarre:hover{
+    cursor: pointer;
+    background-color: var(--fond-barre);
+}
+.textBarre:active{
+    background-color: var(--fond-page);
+    cursor: pointer;
+    transition: 0.2s;
+}
+.textBarre1{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 17px;
+    padding: 5px 5px;
+    border-radius: 5px;
+    background-color: var(--fond-page);
+}
+.container{
+    padding-left: 0px;
+}
+.container-rech {
+        position: relative;
+        width: 250px;
+        margin-bottom: 20px;
+    }
+    .container-rech .inp-rech {
+        width: 100%;
+        padding: 8px 5px 5px 35px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        outline: none;
+        align-items: center;
+    }
+    .container-rech .icon-rech {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+        pointer-events: none;
+    }
+.btn-enregistrement{
+    position: absolute;
+    width: 150px;
+    font-weight: bold;
+    right: 50px;
+    top: 190px;
+    height: 35px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--couleur-bouton);
+    color: var(--fond-page);
+}
+.btn-enregistrement:hover{
+    cursor: pointer;
+    transition: 0.2s;
+    background-color: var(--couleur-bouton);
+    box-shadow: 3px 3px 5px 0.2px var(--couleur-Back);
+}
+.Container-info{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items:self-end;
+}
+    .flexpatient{
+        display: flex;
+        justify-content: flex-end;
+        width: 380px;
+        margin: 10px 10px;
+        align-items: center;
+    }
+.sp-titre{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 16px;
+    font-weight: bold;
+}
+.inp-sex{
+    width: 105px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-style: solid;
+    height: 30px;
+    align-content: center;
+    align-items: center;
+    margin: 0px 8px;
+    padding-left: 10px;
+}
+.inp-sex:hover{
+    border-color: var(--couleur-text);
+    transition: 0.3s;
+}
+.inp-sex:focus {
+    border-color: var(--couleur-text);
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.3); 
+    outline: none;
+}
+.inp-nom{
+    width: 230px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-style: solid;
+    height: 30px;
+    align-content: center;
+    align-items: center;
+    margin: 0px 8px;
+    padding-left: 10px;
+}
+.inp-nom:hover{
+    border-color: var(--couleur-text);
+    transition: 0.3s;
+}
+.inp-nom:focus {
+    border-color: var(--couleur-text);
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.3); 
+    outline: none;
+}
+hr{
+    margin-bottom: 15px;
+}
+select {
+    width: 230px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+    border-radius: 5px;
+    height: 30px;
+    margin: 8px;
+}
+.sp-analyse{
+    margin: 0px 18px;
+}
+/* Certains navigateurs acceptent de colorer les options */
+option {
+  background-color: white;
+  border-radius: 5px;
+  
+}
+.dv-btn{
+    height: 50px;
+}
+.btn-modifier{
+    position: absolute;
+    right: 50px;
+    width: 150px;
+    font-weight: bold;
+    height: 35px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--couleur-text);
+    color: var(--fond-page);
+}
+.btn-modifier:hover{
+    cursor: pointer;
+    transition: 0.2s;
+    background-color: var(--couleur-text);
+    box-shadow: 3px 3px 5px 0.2px var(--couleur-Back);
+}
+.container-bas{
+    display: flex;
+    justify-content:baseline;
+}
+.container-liste-analyse{
+    max-width: 900px;
+    min-width: 600px;
+    border-radius: 5px;
+    border: 1px solid var(--couleur-Back);
+    box-shadow: 0.2px 0.2px 3px 1px var(--couleur-Back);
+    padding: 5px 10px;
+    margin-top: 20px;
+}
+.tableau-analyses {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.tableau-analyses th {
+  text-align: left;
+  color: #888;
+  background-color: var(--couleur-Back);
+  padding: 15px;
+  font-weight: bold;
+}
+
+.tableau-analyses td {
+  padding: 20px 15px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+}
+
+/* Optionnel : enlever la bordure sur la toute première ligne pour correspondre à l'image */
+.tableau-analyses tbody tr:first-child td {
+  border-top: 1px solid #ddd;
+}
+.conteneur-tableau {
+  max-height: 300px;
+  min-height: 200px;
+  min-width: 600px;
+  overflow-y: auto;
+}
+
+/* Astuce pour garder l'en-tête fixe pendant le défilement */
+.tableau-analyses thead {
+  position: sticky;
+  top: 0;
+  background-color: white; /* Fond blanc pour cacher les lignes qui défilent en dessous */
+}
+tr:hover{
+    cursor: pointer;
+    background-color: var(--fond-barre);
+}
+th{
+    cursor: default;
+}
+
+.message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Fond semi-transparent */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* L'effet de flou (Blur) */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* Compatibilité Safari */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.message-box {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 350px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  font-family: sans-serif;
+}
+
+.icon {
+  width: 60px;
+  margin-bottom: 15px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 30px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+.message-overlay {
+  display: none;
+}
+
+
+/* Style pour les tablettes  */
+@media screen and (max-width: 1024px) {
+  
+  body { /* Une couleur de fond différente pour tester */
+    font-size: 18px;           /* On agrandit un peu le texte pour le tactile */
+  }
+.message-overlay {
+    display: flex; 
+  }
+  .container {
+    display: none;
+  }
+}
+
+
+
+/* Importer les styles communs */
+@import url('ajoutanalyse.css');
+
+/* ==================================================
+   ZONE DES VALEURS PRÉDÉFINIES
+   ================================================== */
+
+.zone-valeurs {
+    background: #f8f9fa;
+    border: 1px dashed #2ecc71;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+}
+
+.info-text {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin: 5px 0 10px;
+}
+
+kbd {
+    background: #2c3e50;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: monospace;
+}
+
+/* ===== TAGS CONTAINER ===== */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    background: white;
+    border: 1.5px solid #ddd;
+    border-radius: 6px;
+    min-height: 50px;
+    align-items: center;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #2ecc71;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.tag-remove {
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+}
+
+.tag-remove:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.input-tag {
+    flex: 1;
+    min-width: 150px;
+    border: none;
+    outline: none;
+    padding: 5px;
+    font-size: 14px;
+    background: transparent;
+}
+
+/* ===== SUGGESTIONS ===== */
+.suggestions {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-suggestion {
+    padding: 6px 14px;
+    background: white;
+    border: 1.5px solid #2ecc71;
+    color: #2ecc71;
+    border-radius: 16px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-suggestion:hover {
+    background: #2ecc71;
+    color: white;
+}
+
+/* ===== TAG-VALEUR (dans le tableau) ===== */
+.tag-valeur {
+    display: inline-block;
+    background: #e8f5ee;
+    color: #2ecc71;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    margin: 2px;
+    font-weight: 600;
+}
+
+/* ===== BADGES TYPES ===== */
+.badge-liste {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+/* ===== MODAL LARGE ===== */
+.modal-large {
+    max-width: 600px;
+}
+
+.modal-row {
+    display: flex;
+    gap: 15px;
+}
+
+.modal-row > div {
+    flex: 1;
+}
+
+
+
+/* ===== WARNING pour type Liste ===== */
+.warning-liste {
+    background: #fef3c7;
+    color: #92400e;
+    border-left: 4px solid #f59e0b;
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+/* ===== ZONE-VALEURS toujours visible maintenant ===== */
+.zone-valeurs {
+    background: #f0fdf4;
+    border: 2px dashed #2ecc71;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.zone-valeurs h4 {
+    margin: 0 0 8px 0;
+    color: #27ae60;
+    font-size: 16px;
+}
+
+.zone-valeurs .info-text {
+    color: #555;
+    font-size: 13px;
+    margin: 5px 0 12px;
+    line-height: 1.5;
+}
+
+/* Style spécifique selon le type (bordure colorée) */
+.zone-valeurs[data-type="liste"] {
+    border-color: #f59e0b;
+    background: #fffbeb;
+}
+
+.zone-valeurs[data-type="liste"] h4 {
+    color: #d97706;
+}
+
+
+
+
+

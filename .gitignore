@@ -1,0 +1,13 @@
+# Environnement
+.env
+venv/
+__pycache__/
+*.pyc
+.claude/
+
+# Base de données locale
+*.db
+instance/
+
+# IDE
+.vscode/

@@ -1,0 +1,423 @@
+{% extends 'base.html' %}
+
+{% block title %}Enregistrement - RyvixLab{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/enregistrement.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="dvAnle">
+        <div class="barre">
+            <a href="{{ url_for('main.rech_patient') }}">
+                <div class="textBarre">Recherche</div>
+            </a>
+            <div class="textBarre1">Enregistrement</div>
+            <a href="{{ url_for('main.resultat') }}">
+                <div class="textBarre">Résultat</div>
+            </a>
+        </div>
+    </div>
+    
+    <div class="GrandTitre">
+        <div class="Titre-Form">Enregistrement</div>
+    </div>
+    
+    <div class="container">
+        
+        <!-- ===== RECHERCHE PATIENT EXISTANT ===== -->
+        <h3>🔍 Rechercher un patient existant</h3>
+        
+        <div class="container-rech">
+            <span class="icon-rech">🔍</span>
+            <input
+                type="text"
+                id="rech-patient"
+                placeholder="Tapez nom ou code patient..."
+                class="inp-rech"
+                autocomplete="off"
+            >
+        </div>
+        
+        <!-- Résultats de recherche -->
+        <div id="resultats-recherche" class="resultats-recherche"></div>
+        
+        <hr>
+        
+        <!-- ===== FORMULAIRE PRINCIPAL ===== -->
+        <form
+            id="form-enregistrement"
+            method="POST"
+            action="{{ url_for('examen.enregistrement') }}"
+        >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="patient_id" id="patient_id" value="{{ patient_preselect.id if patient_preselect else '' }}">
+            
+            <h3 id="titre-section">
+                {% if patient_preselect %}
+                    Patient sélectionné
+                {% else %}
+                     Informations du patient
+                {% endif %}
+            </h3>
+            
+            <!-- Bandeau patient sélectionné (caché par défaut) -->
+            <div id="patient-selectionne" 
+                 class="patient-selectionne" 
+                 {% if not patient_preselect %}style="display: none;"{% endif %}>
+                <div class="badge-existant"> Patient existant sélectionné</div>
+                <div id="info-patient-existant">
+                    {% if patient_preselect %}
+                        <p><strong>{{ patient_preselect.code }}</strong> - {{ patient_preselect.nom_complet }}</p>
+                        {% if patient_preselect.date_naissance %}
+                            <p> Né(e) le {{ patient_preselect.date_naissance.strftime('%d/%m/%Y') }}</p>
+                        {% endif %}
+                        {% if patient_preselect.adresse %}
+                            <p> {{ patient_preselect.adresse }}</p>
+                        {% endif %}
+                        {% if patient_preselect.telephone %}
+                            <p> {{ patient_preselect.telephone }}</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <button type="button" id="btn-nouveau-patient" class="btn-link">
+                     Changer / Nouveau patient
+                </button>
+            </div>
+            
+            <!-- Champs patient (nouveau) -->
+            <div id="formulaire-nouveau-patient" class="Container-info"
+                 {% if patient_preselect %}style="display: none;"{% endif %}>
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Nom complet *</span>
+                        <input
+                            name="nom_complet"
+                            id="nom_complet"
+                            type="text"
+                            class="inp-nom"
+                            placeholder="Ex: Pierre Resimene"
+                            {% if not patient_preselect %}required{% endif %}
+                        >
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Date de naissance</span>
+                        <input
+                            name="date_naissance"
+                            type="date"
+                            class="inp-nom"
+                        >
+                    </div>
+                </div>
+                
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Lieu de naissance</span>
+                        <input
+                            name="lieu_naissance"
+                            type="text"
+                            class="inp-nom"
+                            placeholder="Ex: Hinche"
+                        >
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Sexe</span>
+                        <select name="sexe" class="inp-nom">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="M">Homme</option>
+                            <option value="F">Femme</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Adresse</span>
+                        <input
+                            name="adresse"
+                            type="text"
+                            class="inp-nom"
+                            placeholder="Ex: #2, rue Iwen"
+                        >
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Téléphone</span>
+                        <input
+                            name="telephone"
+                            type="text"
+                            class="inp-nom"
+                            placeholder="Ex: +509 1234 5678"
+                        >
+                    </div>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <!-- ===== SÉLECTION DES ANALYSES ===== -->
+            <h3> Sélectionner les analyses</h3>
+            
+            <div class="info-text">
+                 Cochez les analyses demandées par le patient. Le total se calcule automatiquement.
+            </div>
+            
+            <div class="container-bas">
+                <div class="container-liste-analyse">
+                    <h4>Liste des analyses disponibles
+                        <span class="counter">({{ analyses|length }})</span>
+                    </h4>
+                    
+                    <div class="conteneur-tableau">
+                        {% if analyses %}
+                        <table class="tableau-analyses">
+                            <thead>
+                                <tr>
+                                    <th width="50">✓</th>
+                                    <th>Service</th>
+                                    <th>Analyse</th>
+                                    <th>Prix</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for analyse in analyses %}
+                                <tr class="ligne-analyse" data-prix="{{ analyse.prix }}">
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            name="analyses"
+                                            value="{{ analyse.id }}"
+                                            class="chk-analyse"
+                                            id="chk-{{ analyse.id }}"
+                                        >
+                                    </td>
+                                    <td>{{ analyse.service or '-' }}</td>
+                                    <td>
+                                        <label for="chk-{{ analyse.id }}" class="label-analyse">
+                                            <strong>{{ analyse.nom }}</strong>
+                                        </label>
+                                    </td>
+                                    <td><strong>{{ '{:,.2f}'.format(analyse.prix) }} HTG</strong></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="empty-state">
+                            <p>⚠️ Aucune analyse disponible.</p>
+                            {% if current_user.is_admin() %}
+                            <p>
+                                <a href="{{ url_for('analyse.ajout_analyse') }}" class="btn-link">
+                                    ➕ Ajouter des analyses
+                                </a>
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ===== TOTAL & VALIDATION ===== -->
+            <div class="zone-total">
+                <div class="ligne-info">
+                    <span>Nombre d'analyses sélectionnées :</span>
+                    <strong id="nb-analyses">0</strong>
+                </div>
+                <div class="ligne-info ligne-total">
+                    <span>Total à payer :</span>
+                    <strong id="total-display">0.00 HTG</strong>
+                </div>
+            </div>
+            
+            <!-- Médecin prescripteur + Notes -->
+            <div class="mini-conpatien" style="margin-top: 20px;">
+                <div class="flexpatient">
+                    <span class="sp-titre">Médecin prescripteur (optionnel)</span>
+                    <input
+                        name="medecin_prescripteur"
+                        type="text"
+                        class="inp-nom"
+                        placeholder="Ex: Dr. Jean Pierre"
+                    >
+                </div>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <span class="sp-titre">Notes (optionnel)</span>
+                <textarea
+                    name="notes"
+                    class="inp-nom"
+                    rows="2"
+                    placeholder="Observations particulières..."
+                ></textarea>
+            </div>
+            
+            <!-- Bouton d'enregistrement -->
+            <div style="margin-top: 25px;">
+                <button type="submit" class="btn-enregistrement btn-grand">
+                    Enregistrer & Imprimer reçu
+                </button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // ====================================================
+        // CALCUL DU TOTAL EN TEMPS RÉEL
+        // ====================================================
+        
+        function recalculerTotal() {
+            const cases = document.querySelectorAll('.chk-analyse:checked');
+            let total = 0;
+            let nb = 0;
+            
+            cases.forEach(chk => {
+                const ligne = chk.closest('.ligne-analyse');
+                if (ligne) {
+                    const prix = parseFloat(ligne.dataset.prix) || 0;
+                    total += prix;
+                    nb++;
+                }
+            });
+            
+            document.getElementById('nb-analyses').textContent = nb;
+            document.getElementById('total-display').textContent = 
+                total.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' HTG';
+        }
+        
+        // Attacher l'événement à toutes les checkboxes
+        document.querySelectorAll('.chk-analyse').forEach(chk => {
+            chk.addEventListener('change', recalculerTotal);
+        });
+        
+        // Cliquer sur la ligne entière coche/décoche
+        document.querySelectorAll('.ligne-analyse').forEach(ligne => {
+            ligne.addEventListener('click', function(e) {
+                // Éviter le double déclenchement si on clique directement sur la checkbox
+                if (e.target.classList.contains('chk-analyse') || e.target.tagName === 'LABEL') return;
+                const chk = this.querySelector('.chk-analyse');
+                if (chk) {
+                    chk.checked = !chk.checked;
+                    recalculerTotal();
+                }
+            });
+        });
+        
+        // ====================================================
+        // RECHERCHE PATIENT EXISTANT (AJAX)
+        // ====================================================
+        
+        const rechInput = document.getElementById('rech-patient');
+        const resultatsDiv = document.getElementById('resultats-recherche');
+        let timeoutId = null;
+        
+        rechInput.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            const q = this.value.trim();
+            
+            if (q.length < 2) {
+                resultatsDiv.innerHTML = '';
+                return;
+            }
+            
+            timeoutId = setTimeout(() => {
+                fetch(`/patients/api/recherche?q=${encodeURIComponent(q)}`)
+                    .then(r => r.json())
+                    .then(patients => {
+                        if (patients.length === 0) {
+                            resultatsDiv.innerHTML = '<div class="aucun-resultat">Aucun patient trouvé. Remplissez le formulaire pour en créer un nouveau.</div>';
+                            return;
+                        }
+                        
+                        resultatsDiv.innerHTML = patients.map(p => `
+                            <div class="item-patient" data-id="${p.id}" data-info='${JSON.stringify(p)}'>
+                                <div class="item-info">
+                                    <strong>${p.code}</strong> - ${p.nom_complet}
+                                    ${p.date_naissance ? '<br><small>Né(e) le ' + p.date_naissance + '</small>' : ''}
+                                </div>
+                                <button type="button" class="btn-selectionner">Sélectionner</button>
+                            </div>
+                        `).join('');
+                        
+                        // Attacher les événements
+                        document.querySelectorAll('.item-patient .btn-selectionner').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                const item = this.closest('.item-patient');
+                                const info = JSON.parse(item.dataset.info);
+                                selectionnerPatient(info);
+                            });
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Erreur recherche:', err);
+                    });
+            }, 300);
+        });
+        
+        function selectionnerPatient(patient) {
+            // Stocker l'ID
+            document.getElementById('patient_id').value = patient.id;
+            
+            // Afficher les infos
+            document.getElementById('info-patient-existant').innerHTML = `
+                <p><strong>${patient.code}</strong> - ${patient.nom_complet}</p>
+                ${patient.date_naissance ? '<p> Né(e) le ' + patient.date_naissance + '</p>' : ''}
+                ${patient.adresse ? '<p> ' + patient.adresse + '</p>' : ''}
+                ${patient.telephone ? '<p> ' + patient.telephone + '</p>' : ''}
+            `;
+            
+            // Afficher le bandeau, cacher le formulaire
+            document.getElementById('patient-selectionne').style.display = 'block';
+            document.getElementById('formulaire-nouveau-patient').style.display = 'none';
+            document.getElementById('titre-section').textContent = '✓ Patient sélectionné';
+            
+            // Retirer le 'required' du nom (puisqu'on utilise patient_id)
+            document.getElementById('nom_complet').required = false;
+            
+            // Vider la recherche
+            rechInput.value = '';
+            resultatsDiv.innerHTML = '';
+
+            // ====================================================
+            // 🆕 SI PATIENT PRÉ-SÉLECTIONNÉ : SCROLL VERS LES ANALYSES
+            // ====================================================
+            {% if patient_preselect %}
+                // Faire défiler doucement vers la section des analyses
+                setTimeout(function() {
+                    const sectionAnalyses = document.querySelector('h3:nth-of-type(2)');
+                    if (sectionAnalyses) {
+                        sectionAnalyses.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }, 300);
+                
+                // Notification visuelle discrète
+                console.log('✅ Patient pré-sélectionné depuis la liste');
+            {% endif %}
+
+        }
+        
+        // Bouton "Changer / Nouveau patient"
+        document.getElementById('btn-nouveau-patient').addEventListener('click', function() {
+            document.getElementById('patient_id').value = '';
+            document.getElementById('patient-selectionne').style.display = 'none';
+            document.getElementById('formulaire-nouveau-patient').style.display = 'block';
+            document.getElementById('titre-section').textContent = ' Informations du patient';
+            document.getElementById('nom_complet').required = true;
+        });
+    });
+</script>
+{% endblock %}

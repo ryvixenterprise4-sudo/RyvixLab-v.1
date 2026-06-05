@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - RyvixLab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/compte2.css') }}">
+    
+</head>
+<body>
+    <div>
+        <div class="sp"><span class="sp1">Ryvix</span><span class="sp2">Lab</span></div>
+        
+        {% include '_flash_messages.html' %}
+        
+        <div class="container">
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <div class="textconect">Connexion</div>
+                
+                <div>
+                    <input
+                        id="inp-utilisateur"
+                        name="username"
+                        class="inp"
+                        type="text"
+                        placeholder="Utilisateur ou Email"
+                        required
+                        autofocus
+                    >
+                </div>
+                
+                <div>
+                    <input
+                        id="inp-motdepasse"
+                        name="password"
+                        class="inp"
+                        type="password"
+                        placeholder="Mot de passe"
+                        required
+                    >
+                </div>
+                
+                <button id="btn-connecter" class="btnconect" type="submit">
+                    Se connecter
+                </button>
+            </form>
+            
+            <div class="dvtextanba">
+                En cliquant sur Se connecter, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité
+            </div>
+        </div>
+    </div>
+</body>
+</html>

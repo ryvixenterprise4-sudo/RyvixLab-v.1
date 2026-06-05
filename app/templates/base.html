@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>{% block title %}RyvixLab{% endblock %}</title>
+    
+    <!-- CSS COMMUN à toutes les pages connectées -->
+    {% if current_user.is_authenticated %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    {% endif %}
+    
+    <!-- CSS des messages flash -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flash.css') }}">
+    
+    <!-- CSS spécifique à chaque page -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    
+    {% if current_user.is_authenticated %}
+        {% include 'partials/sidebar.html' %}
+    {% endif %}
+    
+    {% include '_flash_messages.html' %}
+    
+    {% block content %}{% endblock %}
+    
+    {% if current_user.is_authenticated %}
+        {% include 'partials/alert_box.html' %}
+    {% endif %}
+    
+    {% block extra_js %}{% endblock %}
+    
+</body>
+</html>

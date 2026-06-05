@@ -1,0 +1,317 @@
+:root {
+  /* Définition des couleurs */
+  --couleur-text: #25C0B8;
+  --couleur-bouton: #27C441;
+  --couleur-Back: #dddddd;
+  --fond-page: #ffffff;
+  --fond-barre: #f7f7f7;
+}
+body{
+    padding-left: 200px;
+    background-color: #ffffff;
+}
+
+a{
+    text-decoration: none;color: black;
+}
+.ligne-verticale {
+  border-left: 1px solid var(--couleur-Back);
+  height: 100%;
+  margin: 0 10px;
+  position: fixed;
+  left: 180;
+  top: 0;
+}
+.container-Bar{
+    position: fixed;
+    left: 5;
+}
+.sp{
+    margin-bottom: 25px;
+}
+.sp1{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bolder;
+    color:#27C441;
+    font-size:16px;
+}
+.sp2{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bolder;
+    color: black;
+    font-size:16px;
+}
+.tite{
+    font-size: 15px;
+    font-weight:bold;
+    margin: 10px 0px;
+}
+.mini-con{
+    border-radius: 5px;
+    height: 30px;
+    width: 160px;
+    display: flex;
+    align-items: center;
+    margin: 10px 0px;
+}
+.mini-con:hover{
+    cursor: pointer;
+    transition: 0.2s;
+    background-color: #f7f7f7;
+}
+.mini-con:active{
+    background-color:#D2D2D2;
+}
+.ico{
+    width: 25px;
+    margin: 0px 8px;
+}
+.text-mini{
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+}
+.cont-bas{
+    position: fixed;
+    bottom: 0;
+}
+.grandTitre{
+    height: 100px;
+    display: flex;
+    align-items: center;
+}
+.Titre-Form{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 1px;
+    font-weight:bolder;
+    margin: 10px 0px;
+    color: var(--couleur-text);
+}
+.dvAnle{
+    padding-top: 5px;
+}
+.barre{
+    display: flex;
+    justify-content: space-between;
+    width: 350px;
+    padding: 2px;
+    background-color: var(--couleur-Back);
+    border-radius: 5px;
+    margin: 0px 0px;
+}
+.textBarre{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 17px;
+    padding: 5px 5px;
+    border-radius: 5px;
+}
+.textBarre:hover{
+    cursor: pointer;
+    background-color: var(--fond-barre);
+}
+.textBarre:active{
+    background-color: var(--fond-page);
+    cursor: pointer;
+    transition: 0.2s;
+}
+.textBarre1{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 17px;
+    padding: 5px 5px;
+    border-radius: 5px;
+    background-color: var(--fond-page);
+}
+    .flexpatient{
+        display: flex;
+        justify-content: flex-end;
+        width: 260px;
+        margin: 10px 0px;
+        align-items: center;
+    }
+.sp-titre{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 16px;
+    font-weight: bold;
+}
+.inp-nom{
+    width: 200px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-style: solid;
+    height: 30px;
+    align-content: center;
+    align-items: center;
+    margin: 0px 8px;
+}
+.inp-nom:hover{
+    border-color: var(--couleur-text);
+    transition: 0.3s;
+}
+.inp-nom:focus {
+    border-color: var(--couleur-text);
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.3); 
+    outline: none;
+}
+.Container-info{
+    display: flex;
+    flex-wrap: wrap;
+    align-items:self-end;
+    gap: 15px;
+}
+.container-liste-analyse{
+    max-width: 300px;
+    border-radius: 5px;
+    border: 1px solid var(--couleur-Back);
+    box-shadow: 0.2px 0.2px 3px 1px var(--couleur-Back);
+    padding: 5px 10px;
+    margin-top: 20px;
+}
+.tableau-analyses {
+    width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+th:hover{
+    cursor: default;
+}
+.tableau-analyses th {
+  text-align: left;
+  color: #888;
+  background-color: var(--couleur-Back);
+  padding: 15px;
+  font-weight: bold;
+}
+
+.tableau-analyses td {
+  padding: 20px 15px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+}
+tr:hover{
+    cursor: pointer;
+    background-color: var(--fond-barre);
+}
+/* Optionnel : enlever la bordure sur la toute première ligne pour correspondre à l'image */
+.tableau-analyses tbody tr:first-child td {
+  border-top: 1px solid #ddd;
+}
+.conteneur-tableau {
+  max-height: 200px;
+  min-height: 200px;
+  overflow-y: auto;
+}
+.conteneur-tableau1 {
+  max-height: 200px;
+  min-height: 200px;
+  width: 230px;
+  overflow-y: auto;
+}
+hr{
+    margin: 20px 0px;
+}
+/* Astuce pour garder l'en-tête fixe pendant le défilement */
+.tableau-analyses thead {
+  position: sticky;
+  top: 0;
+  background-color: white; /* Fond blanc pour cacher les lignes qui défilent en dessous */
+}
+tr:hover{
+    cursor: pointer;
+    background-color: var(--fond-barre);
+}
+th{
+    cursor: default;
+}
+.btn-enregistrement{
+    position: absolute;
+    width: 150px;
+    font-weight: bold;
+    right: 50px;
+    top: 190px;
+    height: 35px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--couleur-bouton);
+    color: var(--fond-page);
+}
+.btn-enregistrement:hover{
+    cursor: pointer;
+    transition: 0.2s;
+    background-color: var(--couleur-bouton);
+    box-shadow: 3px 3px 5px 0.2px var(--couleur-Back);
+}
+.flexbouton{
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 40px;
+}
+.btn-ajoutimpression{
+    background-color: var(--couleur-text);
+    font-weight: bold;
+}
+.message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Fond semi-transparent */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* L'effet de flou (Blur) */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* Compatibilité Safari */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.message-box {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 350px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  font-family: sans-serif;
+}
+
+.icon {
+  width: 60px;
+  margin-bottom: 15px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 30px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+.message-overlay {
+  display: none;
+}
+
+
+/* Style pour les tablettes  */
+@media screen and (max-width: 1024px) {
+  
+  body { /* Une couleur de fond différente pour tester */
+    font-size: 18px;           /* On agrandit un peu le texte pour le tactile */
+  }
+.message-overlay {
+    display: flex; 
+  }
+  .container {
+    display: none;
+  }
+}

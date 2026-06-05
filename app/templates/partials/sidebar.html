@@ -1,0 +1,96 @@
+<!--
+    Sidebar commune à toutes les pages connectées.
+         
+    La sidebar adapte les liens selon le rôle de l'utilisateur :
+    - Tous : Accueil, Recherche, Rapport, Tableau de bord
+    - Admin uniquement : Paramètres App
+-->
+
+<div class="ligne-verticale"></div>
+
+<div class="container-Bar">
+    <!-- Logo -->
+    <div class="sp">
+        <span class="sp1">Ryvix</span><span class="sp2">Lab</span>
+    </div>
+    
+    <!-- Section "Découvrir" -->
+    <div class="tite">Découvrir</div>
+    
+    <div>
+        <!-- Accueil -->
+        <a href="{{ url_for('main.acceuil') }}">
+            <div class="{{ 'mini-Conselect' if active_page == 'acceuil' else 'mini-Con' }}">
+                <div>
+                    <img class="ico" src="{{ url_for('static', filename='images/imageHome.png') }}" alt="">
+                </div>
+                <div class="text-mini">Accueil</div>
+            </div>
+        </a>
+        
+        <!-- Recherche / Résultats -->
+        <a href="{{ url_for('main.rech_patient') }}">
+            <div class="{{ 'mini-Conselect' if active_page == 'rech_patient' else 'mini-Con' }}">
+                <div>
+                    <img class="ico" src="{{ url_for('static', filename='images/search.png') }}" alt="">
+                </div>
+                <div class="text-mini">Recherche</div>
+            </div>
+        </a>
+        
+        <!-- Rapport -->
+        <a href="{{ url_for('main.rapport') }}">
+            <div class="{{ 'mini-Conselect' if active_page == 'rapport' else 'mini-Con' }}">
+                <div>
+                    <img class="ico" src="{{ url_for('static', filename='images/rapport (1).png') }}" alt="">
+                </div>
+                <div class="text-mini">Rapport</div>
+            </div>
+        </a>
+        
+        <!-- Tableau de bord -->
+        <a href="{{ url_for('main.tableau') }}">
+            <div class="{{ 'mini-Conselect' if active_page == 'tableau' else 'mini-Con' }}">
+                <div>
+                    <img class="ico" src="{{ url_for('static', filename='images/statisctics.png') }}" alt="">
+                </div>
+                <div class="text-mini">Tableau de bord</div>
+            </div>
+        </a>
+    </div>
+    
+    <!-- Section "Autres" : Paramètres (admin uniquement) -->
+    {% if current_user.is_admin() %}
+    <div class="tite">Autres</div>
+    
+    <a href="{{ url_for('main.paramettre') }}">
+        <div class="{{ 'mini-Conselect' if active_page == 'paramettre' else 'mini-Con' }}">
+            <div>
+                <img class="ico" src="{{ url_for('static', filename='images/Paramettre.png') }}" alt="">
+            </div>
+            <div class="text-mini">Paramètres App</div>
+        </div>
+    </a>
+    {% endif %}
+    
+    <!-- Bas de sidebar : utilisateur + déconnexion -->
+    <div class="cont-bas">
+        <div class="mini-Con">
+            <div>
+                <img class="ico" src="{{ url_for('static', filename='images/user.png') }}" alt="">
+            </div>
+            <div id="Utilisateur-conect" class="text-mini">
+                {{ current_user.username }}
+            </div>
+        </div>
+        
+        <a href="{{ url_for('auth.logout') }}">
+            <div class="mini-Con">
+                <div>
+                    <img class="ico" src="{{ url_for('static', filename='images/turn-off.png') }}" alt="">
+                </div>
+                <div class="text-mini">Déconnexion</div>
+            </div>
+        </a>
+    </div>
+</div>

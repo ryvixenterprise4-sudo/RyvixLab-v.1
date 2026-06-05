@@ -1,0 +1,125 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord</title>
+    <link rel="stylesheet" href="/static/css/tableau.css">
+</head>
+<body>
+    <div class="Bartop">
+        <div class="sp"><span class="sp1">Ryvix</span><Span class="sp2">Lab</Span></div>
+        <div class="textcentre">Tableau de bord</div>
+        <div>
+            <div class="mini-Con">
+                <div><img class="ico" src="/static/images/user.png" alt=""></div>
+                <div id="Utilisateur-conect" class="text-mini">Adema</div>
+            </div>
+        </div>
+    </div>
+    <div><a href="acceuil.html"><img class="retour" src="/static/images/previous.png" alt=""></a></div>
+<div class="container-journal">
+    <div class="container-tableau">
+        <span class="sp-entet">Journal de caisse</span>
+        <div id="Id-Qte" class="dv-qte">56,543.00 HTG</div>
+        <div class="text-bas">Chifre d'affaires mensuel</div>
+    </div>
+    <div class="container-tableau">
+        <span class="sp-entet">Journal de caisse</span>
+        <div id="Id-Qte" class="dv-qte">56,543.00 HTG</div>
+        <div class="text-bas">Chifre d'affaires mensuel</div>
+    </div>
+    <div class="container-tableau">
+        <span class="sp-entet">Journal de caisse</span>
+        <div id="Id-Qte" class="dv-qte">56,543.00 HTG</div>
+        <div class="text-bas">Chifre d'affaires mensuel</div>
+    </div>
+</div>
+<div class="container-liste-analyse">
+                <div class="container-tableau1">
+                    <h4>Tableaux des analyses</h4>
+                    <table class="tableau-analyses">
+                    <thead>
+                        <tr>
+                            <th>Analyse</th>
+                            <th>Qte</th>
+                            <th>Taux</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                        <tr>
+                            <td>En cours(échantillon au laboratoire )</td>
+                            <td>4032</td>
+                            <td>47%</td>
+                        </tr>
+                        <tr>
+                            <td>Terminé/ Validé (Résultats prêts)</td>
+                            <td>245</td>
+                            <td>53%</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+            <div class="container-tableau">
+                <h4>Patients reçus récemment</h4>
+                <div class="dv-info">
+                    <div class="nom-patient">Pierre Bobalise</div>
+                    <div class="adresse-patient">Rue Oreste Zamor Hinche-Haiti</div>
+                </div>
+                <div class="dv-info">
+                    <div class="nom-patient">Jean Louis</div>
+                    <div class="adresse-patient">Rue Oreste Zamor Hinche-Haiti</div>
+                </div>
+                <div class="dv-info">
+                    <div class="nom-patient">Francois Johane</div>
+                    <div class="adresse-patient">Rue louna Cap-Haiti</div>
+                </div>
+                <div class="dv-info">
+                    <div class="nom-patient">Jn Baptiste Adema</div>
+                    <div class="adresse-patient">Rue Oreste Zamor Hinche-Haiti</div>
+                </div>
+                <div class="dv-info">
+                    <div class="nom-patient">Marcus hora</div>
+                    <div class="adresse-patient">Maissade-Haiti</div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="container-liste-analyse">
+    <div class="container-tableau-heb">
+        <h4>Chiffres d'affaires hebdomadaire </h4>
+        <div class="line-chart-container">
+  <div class="chart-wrapper">
+    <div class="y-axis">
+      <span>50,000</span>
+      <span>40,000</span>
+      <span>30,000</span>
+      <span>25,000</span>
+    </div>
+
+    <svg viewBox="0 0 500 200" preserveAspectRatio="none">
+      <polyline
+        fill="none"
+        stroke="#000"
+        stroke-width="3"
+        points="0,180 50,160 100,120 150,140 200,100 250,80 300,120 350,60 400,80 450,20"
+      />
+      <circle cx="450" cy="20" r="8" fill="#000" />
+    </svg>
+  </div>
+
+  <div class="x-axis">
+    <span>avr 21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span>
+  </div>
+</div>
+    </div>
+    <div class="container-tableau-ann">
+        <h4>Chiffres d'affaires Annuel </h4>
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/static/js/script.js"></script>
+</body>
+</html>

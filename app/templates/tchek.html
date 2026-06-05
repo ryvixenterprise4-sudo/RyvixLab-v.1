@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .mon-input {
+    border: 2px solid #ddd;
+    padding: 8px;
+    font-size: 16px;
+    transition: 0.3s;
+  }
+
+  /* L'effet magique ici */
+  .mon-input:focus {
+    border-color: #2ecc71; /* Vert */
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.3); /* Optionnel : petit effet d'éclat */
+    outline: none;
+  }
+</style>
+</head>
+<body>
+
+  <label for="nom">Ton nom :</label>
+  <input type="text" id="nom" class="mon-input" placeholder="Clique ici...">
+
+</body>
+</html>

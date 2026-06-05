@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accès refusé — RyvixLab</title>
+    <style>
+        body { font-family: system-ui, sans-serif; display: flex; justify-content: center;
+               align-items: center; height: 100vh; margin: 0; background: #f7f7f7; }
+        .box { text-align: center; padding: 40px; background: white;
+               border-radius: 8px; border: 1px solid #D2D2D2; }
+        h1 { color: #c0392b; }
+        a  { color: #25C0B8; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>403 — Accès refusé</h1>
+        <p>Vous devez être <strong>administrateur</strong> pour accéder à cette page.</p>
+        <a href="{{ url_for('main.accueil') }}">← Retour à l'accueil</a>
+    </div>
+</body>
+</html>

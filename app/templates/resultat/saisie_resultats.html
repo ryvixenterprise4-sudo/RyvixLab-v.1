@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+
+{% block title %}Saisie {{ donnees.examen.numero }} - RyvixLab{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/saisie_resultats.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="dvAnle">
+        <div class="barre">
+            <a href="{{ url_for('examen.enregistrement') }}">
+                <div class="textBarre">Enregistrement</div>
+            </a>
+            <div class="textBarre1">Résultat</div>
+        </div>
+    </div>
+    
+    <div class="GrandTitre">
+        <div class="Titre-Form">Saisie - {{ donnees.examen.numero }}</div>
+    </div>
+    
+    <div class="container">
+        
+        <!-- ===== INFOS PATIENT ===== -->
+        <div class="card-patient">
+            <div class="patient-header">
+                <div>
+                    <h3>👤 {{ donnees.patient.nom_complet }}</h3>
+                    <p class="patient-code">Code : <strong>{{ donnees.patient.code }}</strong></p>
+                </div>
+                <div class="patient-meta">
+                    {% if donnees.patient.sexe == 'M' %}
+                        <span class="badge-sexe-m">♂ Homme</span>
+                    {% elif donnees.patient.sexe == 'F' %}
+                        <span class="badge-sexe-f">♀ Femme</span>
+                    {% endif %}
+                    
+                    {% if donnees.patient.age %}
+                        <span class="badge-age">{{ donnees.patient.age }} ans</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="patient-details">
+                {% if donnees.patient.date_naissance %}
+                    <span> Né(e) le {{ donnees.patient.date_naissance.strftime('%d/%m/%Y') }}</span>
+                {% endif %}
+                {% if donnees.patient.adresse %}
+                    <span> {{ donnees.patient.adresse }}</span>
+                {% endif %}
+                {% if donnees.patient.telephone %}
+                    <span> {{ donnees.patient.telephone }}</span>
+                {% endif %}
+                {% if donnees.examen.medecin_prescripteur %}
+                    <span> Dr. {{ donnees.examen.medecin_prescripteur }}</span>
+                {% endif %}
+            </div>
+            
+            <div class="examen-statut">
+                {% if donnees.examen.statut == 'en_attente' %}
+                    <span class="badge-statut badge-attente"> En attente de saisie</span>
+                {% elif donnees.examen.statut == 'en_cours' %}
+                    <span class="badge-statut badge-encours">🔄 Saisie en cours</span>
+                {% elif donnees.examen.statut == 'termine' %}
+                    <span class="badge-statut badge-termine">✅ Terminé</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- ===== FORMULAIRE DE SAISIE ===== -->
+        <form method="POST" action="{{ url_for('resultat.saisie', examen_id=donnees.examen.id) }}" id="form-saisie">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            {% for analyse_data in donnees.analyses_a_saisir %}
+                
+                <div class="card-analyse" data-detail-id="{{ analyse_data.detail.id }}">
+                    
+                    <div class="analyse-header">
+                        <div>
+                            <h3> {{ analyse_data.analyse.nom }}</h3>
+                            {% if analyse_data.analyse.service %}
+                                <p class="analyse-service">{{ analyse_data.analyse.service }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            {% if analyse_data.tous_remplis %}
+                                <span class="badge-rempli">✅ Complet</span>
+                            {% else %}
+                                <span class="badge-incomplet">⚠️ Incomplet</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if analyse_data.parametres %}
+                    
+                    <table class="tableau-parametres">
+                        <thead>
+                            <tr>
+                                <th>Paramètre</th>
+                                <th>Résultat</th>
+                                <th>Unité</th>
+                                <th>Valeurs normales</th>
+                                <th>Commentaire</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for param_data in analyse_data.parametres %}
+                                {% set p = param_data.parametre %}
+                                {% set r = param_data.resultat %}
+                                {% set field_id = 'resultat_' ~ analyse_data.detail.id ~ '_' ~ p.id %}
+                                
+                                <tr>
+                                    <!-- Nom du paramètre -->
+                                    <td class="td-nom-param">
+                                        <strong>{{ p.nom_parametre }}</strong>
+                                        {% if p.sous_parametre %}
+                                            <br><small>{{ p.sous_parametre }}</small>
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <!-- Champ de saisie selon le type -->
+                                    <td class="td-saisie">
+                                        {% if p.type_resultat == 'liste' %}
+                                            <!-- Dropdown obligatoire pour type 'liste' -->
+                                            <select
+                                                name="{{ field_id }}"
+                                                class="inp-resultat"
+                                                {% if r %}data-saisi="true"{% endif %}
+                                            >
+                                                <option value="">-- Choisir --</option>
+                                                {% for vp in param_data.valeurs_predefinies %}
+                                                    <option value="{{ vp }}"
+                                                        {% if r and r.valeur == vp %}selected{% endif %}>
+                                                        {{ vp }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        
+                                        {% else %}
+                                            <!-- Champ texte/numérique avec suggestions -->
+                                            <input
+                                                type="{% if p.type_resultat == 'numerique' %}text{% else %}text{% endif %}"
+                                                name="{{ field_id }}"
+                                                value="{{ r.valeur if r else '' }}"
+                                                class="inp-resultat"
+                                                data-type="{{ p.type_resultat }}"
+                                                placeholder="{% if p.type_resultat == 'numerique' %}Ex: 4.5{% else %}Saisir le résultat{% endif %}"
+                                                {% if r %}data-saisi="true"{% endif %}
+                                            >
+                                            
+                                            <!-- Suggestions cliquables -->
+                                            {% if param_data.valeurs_predefinies %}
+                                            <div class="suggestions-resultat">
+                                                {% for vp in param_data.valeurs_predefinies %}
+                                                    <button
+                                                        type="button"
+                                                        class="btn-valeur-rapide"
+                                                        data-target="{{ field_id }}"
+                                                        data-valeur="{{ vp }}"
+                                                    >
+                                                        {{ vp }}
+                                                    </button>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <!-- Unité -->
+                                    <td>{{ p.unite or '-' }}</td>
+                                    
+                                    <!-- Valeurs normales -->
+                                    <td class="td-normales">
+                                        {% if p.valeur_normale_f and p.valeur_normale_m %}
+                                            {% if donnees.patient.sexe == 'F' %}
+                                                <strong>F:</strong> {{ p.valeur_normale_f }}
+                                            {% elif donnees.patient.sexe == 'M' %}
+                                                <strong>H:</strong> {{ p.valeur_normale_m }}
+                                            {% else %}
+                                                F: {{ p.valeur_normale_f }}<br>
+                                                H: {{ p.valeur_normale_m }}
+                                            {% endif %}
+                                        {% elif p.valeur_normale_f %}
+                                            {{ p.valeur_normale_f }}
+                                        {% elif p.valeur_normale_m %}
+                                            {{ p.valeur_normale_m }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <!-- Commentaire -->
+                                    <td>
+                                        <input
+                                            type="text"
+                                            name="commentaire_{{ analyse_data.detail.id }}_{{ p.id }}"
+                                            value="{{ r.commentaire if r and r.commentaire else '' }}"
+                                            class="inp-commentaire"
+                                            placeholder="Optionnel"
+                                        >
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                    {% else %}
+                    <div class="empty-state-small">
+                        ⚠️ Aucun paramètre configuré pour cette analyse.
+                        {% if current_user.is_admin() %}
+                        <br>
+                        <a href="{{ url_for('analyse.configuration') }}" class="btn-link">
+                            Configurer maintenant →
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+            {% endfor %}
+            
+            <!-- ===== BOUTONS D'ACTION ===== -->
+            <div class="zone-actions">
+                <a href="{{ url_for('resultat.liste') }}" class="btn-retour">
+                    ← Retour à la liste
+                </a>
+                
+                <button type="submit" class="btn-enregistrer-resultats">
+                     Enregistrer les résultats
+                </button>
+            </div>
+        </form>
+        
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // ====================================================
+        // BOUTONS DE VALEURS RAPIDES (suggestions)
+        // ====================================================
+        
+        document.querySelectorAll('.btn-valeur-rapide').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetName = this.dataset.target;
+                const valeur = this.dataset.valeur;
+                
+                // Trouver le champ correspondant
+                const input = document.querySelector(`[name="${targetName}"]`);
+                if (input) {
+                    input.value = valeur;
+                    input.classList.add('saisie-faite');
+                    
+                    // Effet visuel
+                    input.style.borderColor = '#2ecc71';
+                    setTimeout(() => {
+                        input.style.borderColor = '';
+                    }, 1000);
+                }
+            });
+        });
+        
+        // ====================================================
+        // VALIDATION EN TEMPS RÉEL : NUMÉRIQUE
+        // ====================================================
+        
+        document.querySelectorAll('.inp-resultat[data-type="numerique"]').forEach(input => {
+            input.addEventListener('blur', function() {
+                const valeur = this.value.trim();
+                if (valeur && isNaN(parseFloat(valeur.replace(',', '.')))) {
+                    alert(`"${valeur}" n'est pas un nombre valide.`);
+                    this.value = '';
+                    this.focus();
+                }
+            });
+        });
+        
+        // ====================================================
+        // INDICATEUR VISUEL DES CHAMPS REMPLIS
+        // ====================================================
+        
+        function actualiserIndicateurs() {
+            document.querySelectorAll('.inp-resultat').forEach(input => {
+                if (input.value.trim() !== '' && input.value !== '-- Choisir --') {
+                    input.classList.add('saisie-faite');
+                } else {
+                    input.classList.remove('saisie-faite');
+                }
+            });
+            
+            // Compter les champs remplis vs total par analyse
+            document.querySelectorAll('.card-analyse').forEach(card => {
+                const inputs = card.querySelectorAll('.inp-resultat');
+                const remplis = Array.from(inputs).filter(i => {
+                    return i.value.trim() !== '' && i.value !== '-- Choisir --';
+                }).length;
+                
+                const badge = card.querySelector('.badge-rempli, .badge-incomplet');
+                if (badge) {
+                    if (remplis === inputs.length) {
+                        badge.className = 'badge-rempli';
+                        badge.textContent = '✅ Complet';
+                    } else if (remplis > 0) {
+                        badge.className = 'badge-partiel';
+                        badge.textContent = `🔄 ${remplis}/${inputs.length}`;
+                    } else {
+                        badge.className = 'badge-incomplet';
+                        badge.textContent = '⚠️ Incomplet';
+                    }
+                }
+            });
+        }
+        
+        // Mettre à jour à chaque changement
+        document.querySelectorAll('.inp-resultat').forEach(input => {
+            input.addEventListener('input', actualiserIndicateurs);
+            input.addEventListener('change', actualiserIndicateurs);
+        });
+        
+        // Initialiser au chargement
+        actualiserIndicateurs();
+        
+        // ====================================================
+        // CONFIRMATION AVANT SOUMISSION SI INCOMPLET
+        // ====================================================
+        
+        document.getElementById('form-saisie').addEventListener('submit', function(e) {
+            const inputs = document.querySelectorAll('.inp-resultat');
+            const remplis = Array.from(inputs).filter(i => {
+                return i.value.trim() !== '';
+            }).length;
+            
+            if (remplis === 0) {
+                e.preventDefault();
+                alert(' Aucun résultat saisi. Veuillez saisir au moins une valeur.');
+                return false;
+            }
+            
+            if (remplis < inputs.length) {
+                if (!confirm(`Vous avez saisi ${remplis}/${inputs.length} résultats.\nVoulez-vous enregistrer la saisie partielle ?\n\n(L'examen restera en statut "En cours")`)) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+        
+        // ====================================================
+        // RACCOURCI : Ctrl+S pour enregistrer
+        // ====================================================
+        
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                document.getElementById('form-saisie').submit();
+            }
+        });
+    });
+</script>
+{% endblock %}

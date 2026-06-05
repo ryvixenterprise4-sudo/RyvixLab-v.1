@@ -1,0 +1,806 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuration - RyvixLab{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ajoutlab.css') }}">
+    
+    
+    <style>
+        /* ===== MODAL OVERLAY ===== */
+        #modalModifParam {
+            display: none !important;
+        }
+        
+        #modalModifParam.show {
+            display: flex !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+            z-index: 999999 !important;
+            justify-content: center !important;
+            align-items: center !important;
+            padding: 20px !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            backdrop-filter: blur(4px);
+        }
+        
+        /* ===== MODAL CONTENT ===== */
+        #modalModifParam .modal-content {
+            background: white !important;
+            padding: 30px 35px !important;
+            border-radius: 12px !important;
+            max-width: 650px !important;
+            width: 100% !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+            position: relative !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+            animation: modalSlideIn 0.3s ease !important;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ===== TITRE ===== */
+        #modalModifParam .modal-content h3 {
+            margin: 0 0 25px 0 !important;
+            color: #2c3e50 !important;
+            font-size: 22px !important;
+            padding-bottom: 15px !important;
+            border-bottom: 2px solid #f0f0f0 !important;
+        }
+        
+        /* ===== LABELS ===== */
+        #modalModifParam .modal-content label {
+            display: block !important;
+            margin: 14px 0 6px 0 !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #2c3e50 !important;
+        }
+        
+        /* ===== INPUTS ET SELECTS DANS LA MODAL ===== */
+        #modalModifParam .modal-content .inp-nom {
+            width: 100% !important;
+            padding: 10px 14px !important;
+            border: 1.5px solid #ddd !important;
+            border-radius: 6px !important;
+            font-size: 14px !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            font-family: inherit !important;
+            background: white !important;
+        }
+        
+        #modalModifParam .modal-content .inp-nom:focus {
+            border-color: #2ecc71 !important;
+            outline: none !important;
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1) !important;
+        }
+        
+        /* ===== LIGNE 2 COLONNES ===== */
+        #modalModifParam .modal-row {
+            display: flex !important;
+            gap: 15px !important;
+            margin-top: 10px !important;
+        }
+        
+        #modalModifParam .modal-row > div {
+            flex: 1 !important;
+        }
+        
+        /* ===== ZONE DES VALEURS DANS LA MODAL ===== */
+        #modalModifParam .tags-container {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            padding: 12px !important;
+            background: #f8f9fa !important;
+            border: 1.5px solid #2ecc71 !important;
+            border-radius: 8px !important;
+            min-height: 50px !important;
+            align-items: center !important;
+            margin-top: 8px !important;
+        }
+        
+        /* ===== ACTIONS (BOUTONS) ===== */
+        #modalModifParam .modal-actions {
+            display: flex !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            margin-top: 30px !important;
+            padding-top: 20px !important;
+            border-top: 2px solid #f0f0f0 !important;
+        }
+        
+        #modalModifParam .btn-cancel,
+        #modalModifParam .btn-save {
+            padding: 11px 24px !important;
+            border: none !important;
+            border-radius: 6px !important;
+            cursor: pointer !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            font-family: inherit !important;
+        }
+        
+        #modalModifParam .btn-cancel {
+            background: #ecf0f1 !important;
+            color: #555 !important;
+        }
+        
+        #modalModifParam .btn-cancel:hover {
+            background: #dfe4e6 !important;
+        }
+        
+        #modalModifParam .btn-save {
+            background: #2ecc71 !important;
+            color: white !important;
+        }
+        
+        #modalModifParam .btn-save:hover {
+            background: #27ae60 !important;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 700px) {
+            #modalModifParam .modal-content {
+                padding: 20px !important;
+                max-height: 95vh !important;
+            }
+            
+            #modalModifParam .modal-row {
+                flex-direction: column !important;
+                gap: 0 !important;
+            }
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    {% include 'partials/nav_analyses.html' %}
+    
+    <div class="GrandTitre">
+        <div class="Titre-Form">Configuration des analyses</div>
+    </div>
+    
+    <div class="container">
+        
+        {% if not analyses %}
+            <div class="alert-warning">
+                ⚠️ Aucune analyse active. <a href="{{ url_for('analyse.ajout_analyse') }}">Créez d'abord une analyse</a>.
+            </div>
+        {% else %}
+        
+       <h3>Nouveau Paramètre</h3>
+        
+        <form class="Container-info" method="POST" action="{{ url_for('analyse.configuration') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="mini-conpatien">
+                <div class="flexpatient">
+                    <span class="sp-titre">Analyse</span>
+                    <div>
+                        <select class="inp-nom" name="analyse_id" id="choix" required>
+                            <option value=""> Sélectionner </option>
+                            {% for analyse in analyses %}
+                                <option value="{{ analyse.id }}">
+                                    {{ analyse.nom }} ({{ analyse.service }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flexpatient">
+                    <span class="sp-titre">Paramètre</span>
+                    <div>
+                        <input name="nom_parametre" type="text" class="inp-nom"
+                               placeholder="Ex: Créatinine, Anti-HBs..." required>
+                    </div>
+                </div>
+
+                <!-- ===== test ===   -->
+                <div class="flexpatient">
+                    <span class="sp-titre">Sous-Paramètre</span>
+                    <div>
+                        <input name="sous_parametre" type="text" class="inp-nom"
+                               placeholder="Ex: Glucose (optionnel)">
+                    </div>
+                </div>
+
+                
+                <div class="flexpatient">
+                    <span class="sp-titre">Type de résultat</span>
+                    <div>
+                        <select name="type_resultat" id="type_resultat" class="inp-nom">
+                            <option value="" disabled selected hidden> Type de résultat </option>
+                            <option value="numerique"> Numérique (ex: 4.5)</option>
+                            <option value="texte"> Texte libre</option>
+                            <option value="liste"> Liste de choix (obligatoire)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ===== ZONE DES VALEURS PRÉDÉFINIES (unifiée) ===== -->
+            <div id="zone_valeurs" class="zone-valeurs">
+                
+                <!-- Titre dynamique selon le type -->
+                <h4 id="titre_zone">Valeurs numériques fréquentes (optionnel)</h4>
+                
+                <!-- Description dynamique -->
+                <p class="info-text" id="desc_zone">
+                    Ajoutez des valeurs fréquemment utilisées pour gagner du temps lors de la saisie.
+                    Le laborantin pourra cliquer dessus ou taper une nouvelle valeur.
+                </p>
+                
+                <!-- Zone de saisie -->
+                <div class="tags-container" id="tags_container">
+                    <input
+                        type="text"
+                        id="input_valeur"
+                        class="input-tag"
+                        placeholder="Tapez une valeur puis Entrée..."
+                    >
+                </div>
+                
+                <input type="hidden" name="valeurs_predefinies" id="valeurs_predefinies">
+                
+                <!-- Suggestions selon le type -->
+                <div class="suggestions" id="suggestions_zone">
+                    <!-- Les suggestions seront injectées par JavaScript -->
+                </div>
+                
+                <!-- Message d'avertissement pour type 'liste' -->
+                <div id="warning_liste" class="warning-liste" style="display: none;">
+                    Pour "Liste de choix", au moins <strong>2 valeurs</strong> sont obligatoires.
+                </div>
+            </div>
+            
+            <div class="mini-conpatien">
+              <!--  <div class="flexpatient">
+                    <span class="sp-titre">Sous-Paramètre</span>
+                    <div>
+                        <input name="sous_parametre" type="text" class="inp-nom"
+                               placeholder="Ex: Glucose (optionnel)">
+                    </div>
+                </div>
+                    -->
+                
+                <div class="flexpatient">
+                    <span class="sp-titre">Unité</span>
+                    <div>
+                        <input name="unite" type="text" class="inp-nom"
+                               placeholder="Ex: mg/dl, mEq/l...">
+                    </div>
+                </div>
+                
+                <div class="flexpatient">
+                    <span class="sp-titre">Valeurs Normales</span>
+                    <div>
+                        <input name="valeur_normale_f" placeholder="Femme" type="text" class="inp-sex">
+                        <input name="valeur_normale_m" placeholder="Homme" type="text" class="inp-sex">
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <button type="submit" class="btn-enregistrement">➕ Ajouter</button>
+            </div>
+        </form>
+        
+        <hr>
+        
+        <hr>
+        
+        {% endif %}
+        
+        <!-- ===== LISTE DES PARAMÈTRES ===== -->
+        <div class="container-liste-analyse">
+            <h4>Liste des Paramètres <span class="counter">({{ parametres|length }})</span></h4>
+            
+            <div class="conteneur-tableau">
+                {% if parametres %}
+                <table class="tableau-analyses">
+                    <thead>
+                        <tr>
+                            <th>Analyse</th>
+                            <th>Paramètre</th>
+                            <th>Sous-Param.</th>
+                            <th>Unité</th>
+                            <th>V. normale (F)</th>
+                            <th>V. normale (H)</th>
+                            <th>Type</th>
+                            <th>Valeurs</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in parametres %}
+                        <tr>
+                            <td><strong>{{ p.analyse.nom }}</strong></td>
+                            <td>{{ p.nom_parametre }}</td>
+                            <td>{{ p.sous_parametre or '-' }}</td>
+                            <td>{{ p.unite or '-' }}</td>
+                            <td>{{ p.valeur_normale_f or '-' }}</td>
+                            <td>{{ p.valeur_normale_m or '-' }}</td>
+                            <td>
+                                <span class="badge badge-{{ p.type_resultat }}">
+                                    {{ p.type_resultat }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if p.type_resultat == 'liste' %}
+                                    {% for vp in p.valeurs_predefinies %}
+                                        <span class="tag-valeur">{{ vp.valeur }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td class="actions">
+                                <button
+                                    type="button"
+                                    class="btn-action btn-edit btn-ouvrir-modif-param"
+                                    data-id="{{ p.id }}"
+                                    data-nom="{{ p.nom_parametre }}"
+                                    data-sous="{{ p.sous_parametre or '' }}"
+                                    data-unite="{{ p.unite or '' }}"
+                                    data-vf="{{ p.valeur_normale_f or '' }}"
+                                    data-vm="{{ p.valeur_normale_m or '' }}"
+                                    data-type="{{ p.type_resultat }}"
+                                    data-valeurs="{{ p.valeurs_predefinies|map(attribute='valeur')|join('|') }}"
+                                    title="Modifier"
+                                >
+                                    ✏️
+                                </button>
+                                
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('analyse.supprimer_parametre', parametre_id=p.id) }}"
+                                    style="display:inline"
+                                    onsubmit="return confirm('Supprimer ce paramètre ?');"
+                                >
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn-action btn-delete" title="Supprimer">🗑️</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <p>📋 Aucun paramètre configuré.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- ===== MODAL DE MODIFICATION DU PARAMÈTRE ===== -->
+  
+    <div id="modalModifParam" class="modal-overlay">
+        <div class="modal-content">
+            <h3>✏️ Modifier le paramètre</h3>
+            
+            <form id="formModifParam" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <label>Nom du paramètre <span style="color:red">*</span></label>
+                <input type="text" name="nom_parametre" id="mod-param-nom" class="inp-nom" required>
+                
+                <label>Sous-paramètre</label>
+                <input type="text" name="sous_parametre" id="mod-param-sous" class="inp-nom"
+                       placeholder="Optionnel">
+                
+                <div class="modal-row">
+                    <div>
+                        <label>Unité</label>
+                        <input type="text" name="unite" id="mod-param-unite" class="inp-nom"
+                               placeholder="Ex: mg/dl">
+                    </div>
+                    <div>
+                        <label>Type de résultat <span style="color:red">*</span></label>
+                        <select name="type_resultat" id="mod-param-type" class="inp-nom" required>
+                            <option value="" disabled> Sélectionner </option>
+                            <option value="numerique"> Numérique</option>
+                            <option value="texte"> Texte libre</option>
+                            <option value="liste"> Liste de choix</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-row">
+                    <div>
+                        <label>Valeur normale (Femme)</label>
+                        <input type="text" name="valeur_normale_f" id="mod-param-vf" class="inp-nom">
+                    </div>
+                    <div>
+                        <label>Valeur normale (Homme)</label>
+                        <input type="text" name="valeur_normale_m" id="mod-param-vm" class="inp-nom">
+                    </div>
+                </div>
+                
+                <!-- Zone des valeurs prédéfinies (toujours visible maintenant) -->
+                <div class="zone-valeurs" style="margin-top: 20px;">
+                    <h4 id="mod_titre_zone">📊 Valeurs prédéfinies</h4>
+                    <p class="info-text" id="mod_desc_zone">
+                        💡 Optionnel pour Numérique/Texte. Obligatoire pour Liste de choix.
+                    </p>
+                    
+                    <div class="tags-container" id="mod_tags_container">
+                        <input type="text" id="mod_input_valeur" class="input-tag"
+                               placeholder="Tapez une valeur...">
+                    </div>
+                    
+                    <input type="hidden" name="valeurs_predefinies" id="mod_valeurs_predefinies">
+                    
+                    <div class="suggestions" id="mod_suggestions_zone">
+                        <!-- Suggestions injectées par JS -->
+                    </div>
+                    
+                    <div id="mod_warning_liste" class="warning-liste" style="display: none;">
+                        ⚠️ Pour "Liste de choix", au moins <strong>2 valeurs</strong> sont obligatoires.
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" id="btnFermerModifParam" class="btn-cancel">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn-save">
+                        💾 Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ===================================================
+    // CONFIGURATION DES SUGGESTIONS PAR TYPE
+    // ===================================================
+    
+    const SUGGESTIONS = {
+        numerique: {
+            titre: '📊 Valeurs numériques fréquentes (optionnel)',
+            description: '💡 Ajoutez des nombres fréquents. Le laborantin pourra cliquer dessus OU taper une nouvelle valeur.',
+            placeholder: 'Tapez un nombre puis Entrée...',
+            inputType: 'text',
+            suggestions: [
+                { label: 'Glycémie courante', valeurs: '70|90|110|140|180' },
+                { label: 'Tension', valeurs: '80|100|120|140|160' },
+                { label: 'Plage 0-10', valeurs: '0|2.5|5|7.5|10' }
+            ]
+        },
+        texte: {
+            titre: '📝 Textes fréquents (optionnel)',
+            description: '💡 Ajoutez des textes fréquents. Le laborantin pourra cliquer dessus OU taper son propre texte.',
+            placeholder: 'Tapez une valeur puis Entrée...',
+            inputType: 'text',
+            suggestions: [
+                { label: 'Couleurs urine', valeurs: 'Jaune clair|Jaune foncé|Orange|Rouge|Trouble' },
+                { label: 'Aspect', valeurs: 'Clair|Trouble|Limpide|Visqueux' },
+                { label: 'Observations', valeurs: 'Normal|Anormal|À surveiller|Critique' }
+            ]
+        },
+        liste: {
+            titre: '📋 Choix obligatoires',
+            description: '⚠️ Le laborantin DEVRA choisir parmi cette liste (impossible de taper autre chose). Minimum 2 valeurs.',
+            placeholder: 'Tapez une valeur puis Entrée...',
+            inputType: 'text',
+            suggestions: [
+                { label: 'Positif / Négatif', valeurs: 'Positif|Négatif' },
+                { label: 'Positif/Négatif/Douteux', valeurs: 'Positif|Négatif|Douteux' },
+                { label: '+ / ++ / +++ / ++++', valeurs: '+|++|+++|++++' },
+                { label: 'Présent / Absent', valeurs: 'Présent|Absent' },
+                { label: 'Normal / Anormal', valeurs: 'Normal|Anormal' }
+            ]
+        }
+    };
+    
+    // ===================================================
+    // FONCTIONS UTILITAIRES POUR LES TAGS
+    // ===================================================
+    
+    function ajouterTag(container, valeur, hiddenInput, typeResultat) {
+        if (!valeur || valeur.trim() === '') return;
+        
+        if (typeResultat === 'numerique') {
+            const num = parseFloat(valeur.replace(',', '.'));
+            if (isNaN(num)) {
+                alert('Pour le type Numérique, veuillez saisir un nombre valide.');
+                return;
+            }
+        }
+        
+        const existants = Array.from(container.querySelectorAll('.tag'))
+            .map(t => t.firstChild.textContent.trim());
+        if (existants.includes(valeur.trim())) return;
+        
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.innerHTML = `${valeur.trim()}<button type="button" class="tag-remove">×</button>`;
+        
+        tag.querySelector('.tag-remove').addEventListener('click', function() {
+            tag.remove();
+            updateHiddenInput(container, hiddenInput);
+        });
+        
+        const input = container.querySelector('.input-tag');
+        container.insertBefore(tag, input);
+        updateHiddenInput(container, hiddenInput);
+    }
+    
+    function updateHiddenInput(container, hiddenInput) {
+        const tags = container.querySelectorAll('.tag');
+        const valeurs = Array.from(tags).map(t => t.firstChild.textContent.trim());
+        hiddenInput.value = valeurs.join('|');
+    }
+    
+    function viderTags(container, hiddenInput) {
+        container.querySelectorAll('.tag').forEach(t => t.remove());
+        hiddenInput.value = '';
+    }
+    
+    function chargerTags(container, hiddenInput, valeursStr, typeResultat) {
+        viderTags(container, hiddenInput);
+        if (!valeursStr) return;
+        valeursStr.split('|').forEach(v => {
+            if (v.trim()) ajouterTag(container, v.trim(), hiddenInput, typeResultat);
+        });
+    }
+    
+    // ===================================================
+    // METTRE À JOUR LA ZONE SELON LE TYPE
+    // ===================================================
+    
+    function mettreAJourZone(typeValeur, isModal = false) {
+        const prefix = isModal ? 'mod_' : '';
+        const config = SUGGESTIONS[typeValeur];
+        
+        if (!config) {
+            console.warn('Type inconnu:', typeValeur);
+            return;
+        }
+        
+        console.log(`🎨 Mise à jour zone (${isModal ? 'modal' : 'formulaire'}) -> ${typeValeur}`);
+        
+        // Mettre à jour le titre
+        const titreEl = document.getElementById(prefix + 'titre_zone');
+        if (titreEl) {
+            titreEl.textContent = config.titre;
+        }
+        
+        // Mettre à jour la description
+        const descEl = document.getElementById(prefix + 'desc_zone');
+        if (descEl) {
+            descEl.innerHTML = config.description;
+        }
+        
+        // Mettre à jour le placeholder
+        const inputEl = document.getElementById(prefix + 'input_valeur');
+        if (inputEl) {
+            inputEl.placeholder = config.placeholder;
+        }
+        
+        // Régénérer les suggestions
+        const sugZone = document.getElementById(prefix + 'suggestions_zone');
+        if (sugZone) {
+            sugZone.innerHTML = '';
+            if (config.suggestions && config.suggestions.length > 0) {
+                const label = document.createElement('span');
+                label.className = 'suggestions-label';
+                label.textContent = '⚡ Suggestions rapides :';
+                sugZone.appendChild(label);
+                
+                config.suggestions.forEach(sug => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn-suggestion';
+                    btn.dataset.valeurs = sug.valeurs;
+                    btn.textContent = sug.label;
+                    
+                    btn.addEventListener('click', function() {
+                        const container = document.getElementById(prefix + 'tags_container');
+                        const hidden = document.getElementById(prefix + 'valeurs_predefinies');
+                        if (container && hidden) {
+                            chargerTags(container, hidden, this.dataset.valeurs, typeValeur);
+                        }
+                    });
+                    
+                    sugZone.appendChild(btn);
+                });
+            }
+        }
+        
+        // Changer la couleur de bordure selon le type
+        const zoneEl = isModal 
+            ? document.getElementById('mod_zone_valeurs')
+            : document.getElementById('zone_valeurs');
+        if (zoneEl) {
+            if (typeValeur === 'liste') {
+                zoneEl.style.borderColor = '#f59e0b';
+                zoneEl.style.background = '#fffbeb';
+            } else {
+                zoneEl.style.borderColor = '#2ecc71';
+                zoneEl.style.background = '#f0fdf4';
+            }
+        }
+    }
+    
+    // ===================================================
+    // OUVRIR / FERMER LA MODAL
+    // ===================================================
+    
+    function ouvrirModal() {
+        const modal = document.getElementById('modalModifParam');
+        if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            console.log('✅ Modal ouverte');
+        }
+    }
+    
+    function fermerModal() {
+        const modal = document.getElementById('modalModifParam');
+        if (modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+            console.log('✅ Modal fermée');
+        }
+    }
+    
+    // ===================================================
+    // INITIALISATION
+    // ===================================================
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        console.log('🚀 Script ajoutlab chargé');
+        
+        // ============ FORMULAIRE D'AJOUT ============
+        const typeResultat = document.getElementById('type_resultat');
+        const tagsContainer = document.getElementById('tags_container');
+        const inputValeur = document.getElementById('input_valeur');
+        const hiddenValeurs = document.getElementById('valeurs_predefinies');
+        
+        if (typeResultat) {
+            // ⭐ INITIALISER avec le type actuel
+            mettreAJourZone(typeResultat.value);
+            
+            // ⭐ ÉCOUTER LES CHANGEMENTS du select
+            typeResultat.addEventListener('change', function() {
+                console.log('🔄 Changement de type:', this.value);
+                viderTags(tagsContainer, hiddenValeurs);
+                mettreAJourZone(this.value);
+            });
+            
+            // Ajout via touche Entrée
+            if (inputValeur) {
+                inputValeur.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        ajouterTag(tagsContainer, this.value, hiddenValeurs, typeResultat.value);
+                        this.value = '';
+                    }
+                });
+            }
+        }
+        
+        // ============ MODAL ÉDITION ============
+        const modal = document.getElementById('modalModifParam');
+        const modTagsContainer = document.getElementById('mod_tags_container');
+        const modInputValeur = document.getElementById('mod_input_valeur');
+        const modHiddenValeurs = document.getElementById('mod_valeurs_predefinies');
+        const modTypeSelect = document.getElementById('mod-param-type');
+        
+        console.log('Modal trouvée:', modal ? '✅' : '❌');
+        
+        // Boutons d'ouverture
+        const boutons = document.querySelectorAll('.btn-ouvrir-modif-param');
+        console.log(`📋 ${boutons.length} bouton(s) d'édition trouvé(s)`);
+        
+        boutons.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('🖱️ Click sur ✏️, ID:', this.dataset.id);
+                
+                // Pré-remplir les champs
+                document.getElementById('mod-param-nom').value = this.dataset.nom || '';
+                document.getElementById('mod-param-sous').value = this.dataset.sous || '';
+                document.getElementById('mod-param-unite').value = this.dataset.unite || '';
+                document.getElementById('mod-param-vf').value = this.dataset.vf || '';
+                document.getElementById('mod-param-vm').value = this.dataset.vm || '';
+                document.getElementById('mod-param-type').value = this.dataset.type || 'numerique';
+                
+                // ⭐ Mettre à jour la zone selon le type
+                mettreAJourZone(this.dataset.type || 'numerique', true);
+                
+                // Charger les tags existants
+                if (modTagsContainer && modHiddenValeurs) {
+                    chargerTags(modTagsContainer, modHiddenValeurs, 
+                               this.dataset.valeurs || '', this.dataset.type || 'numerique');
+                }
+                
+                // Pointer le formulaire
+                document.getElementById('formModifParam').action = 
+                    '/analyses/parametre/modifier/' + this.dataset.id;
+                
+                // OUVRIR LA MODAL
+                ouvrirModal();
+            });
+        });
+        
+        // ⭐ Changement de type DANS la modal
+        if (modTypeSelect) {
+            modTypeSelect.addEventListener('change', function() {
+                console.log('🔄 Changement de type dans modal:', this.value);
+                if (modTagsContainer && modHiddenValeurs) {
+                    viderTags(modTagsContainer, modHiddenValeurs);
+                }
+                mettreAJourZone(this.value, true);
+            });
+        }
+        
+        // Ajout tag dans la modal
+        if (modInputValeur) {
+            modInputValeur.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    ajouterTag(modTagsContainer, this.value, 
+                              modHiddenValeurs, modTypeSelect.value);
+                    this.value = '';
+                }
+            });
+        }
+        
+        // ============ FERMETURE ============
+        const btnFermer = document.getElementById('btnFermerModifParam');
+        if (btnFermer) {
+            btnFermer.addEventListener('click', fermerModal);
+        }
+        
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) fermerModal();
+            });
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal && modal.classList.contains('show')) {
+                fermerModal();
+            }
+        });
+    });
+</script>
+{% endblock %}
+

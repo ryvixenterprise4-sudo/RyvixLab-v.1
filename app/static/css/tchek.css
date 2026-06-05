@@ -1,0 +1,38 @@
+body{
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
+/* Style de base de l'élément */
+
+.tooltip {
+  position: relative;
+  cursor: pointer;
+  border-bottom: 1px dotted #000; /* Pour indiquer qu'il y a une info */
+}
+
+/* Style commun à l'info-bulle */
+.tooltip::after {
+  content: attr(data-tooltip); /* Récupère le texte du HTML */
+  position: absolute;
+  bottom: 125%; /* Position au-dessus */
+  left: 50%;
+  transform: translatey(-0%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  
+  /* Masqué par défaut */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+}
+
+/* Affichage au survol */
+.tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
