@@ -118,12 +118,12 @@ class TestingConfig(Config):
         
         if not os.environ.get('TEST_DATABASE_URL'):
             raise ValueError(
-                '\n⚠️ ERREUR DE CONFIGURATION\n'
+                '\n ERREUR DE CONFIGURATION\n'
                 'TEST_DATABASE_URL doit être défini dans le fichier .env\n'
                 'Format attendu : postgresql://user:password@localhost:5432/ryvixlab_test\n'
             )
         
-        print('🧪 Mode TESTS activé (PostgreSQL)')
+        print(' Mode TESTS activé (PostgreSQL)')
 
 
 class ProductionConfig(Config):
@@ -158,19 +158,19 @@ class ProductionConfig(Config):
         # Vérifications critiques pour la production
         if not os.environ.get('SECRET_KEY') or os.environ.get('SECRET_KEY') == 'cle-par-defaut-a-changer':
             raise ValueError(
-                '\n⚠️ ERREUR CRITIQUE\n'
+                '\n ERREUR CRITIQUE\n'
                 'SECRET_KEY doit être défini avec une vraie clé en production\n'
                 'Générez une clé : python -c "import secrets; print(secrets.token_hex(32))"\n'
             )
         
         if not os.environ.get('DATABASE_URL'):
             raise ValueError(
-                '\n⚠️ ERREUR CRITIQUE\n'
+                '\n ERREUR CRITIQUE\n'
                 'DATABASE_URL doit être défini dans .env en production\n'
                 'Format : postgresql://user:password@host:5432/ryvixlab_prod\n'
             )
         
-        print('🚀 Mode PRODUCTION activé (PostgreSQL)')
+        print(' Mode PRODUCTION activé (PostgreSQL)')
 
 
 # ========== DICTIONNAIRE DE SÉLECTION ==========
