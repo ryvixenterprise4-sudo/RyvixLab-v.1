@@ -131,9 +131,14 @@ class ProductionConfig(Config):
     
     DEBUG = False
     TESTING = False
+
+    # Récupère et corrige l'URL en cas de besoin 
+    uri = os.environ.get('DATABASE_URL')
+    if uri and uri.startswith("postgres://"):
+        uri = uri.replace("postgres://", "postgresql://", 1)
     
     # Base de données PostgreSQL obligatoire en production
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = uri
     
     # Sécurité maximale
     SESSION_COOKIE_SECURE = True   # Cookies UNIQUEMENT en HTTPS
