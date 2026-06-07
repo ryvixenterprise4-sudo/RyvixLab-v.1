@@ -1,15 +1,22 @@
-from app import app, db
+from app import create_app, db
 from app.models import User
-from werkzeug.security import generate_password_hash
+# Importez votre modèle User. Vérifiez si c'est 'password_hash' ou 'set_password'
+
+app = create_app() # Crée l'instance de l'app avec la config de production
 
 with app.app_context():
     if not User.query.filter_by(username="admin").first():
         admin = User(
             username="admin",
             email="admin@example.com",
-            password_hash=generate_password_hash("@admin12345"),
-            is_admin=True
+            role="administrateur", 
+            actif=True
         )
+        # Utilisez la méthode set_password que vous avez définie dans votre modèle
+        admin.set_password("@admin12345") 
+        
         db.session.add(admin)
         db.session.commit()
-        print(" COMPTE ADMIN CREE EN PRODUCTION ")
+        print(" COMPTE ADMIN CRÉÉ AVEC SUCCÈS")
+    else:
+        print(" L'utilisateur admin existe déjà.")
