@@ -13,7 +13,7 @@ def create_app(config_name=None):
     """Construit l'application Flask."""
     
     if config_name is None:
-        config_name = os.environ.get('FLASK_ENV', 'development')
+        config_name = os.environ.get('FLASK_ENV', 'production')
     
     app = Flask(
         __name__,
