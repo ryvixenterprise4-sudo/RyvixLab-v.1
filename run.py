@@ -1,30 +1,30 @@
-from app import create_app
+from app import create_app, db  # 'db' est temporaire ici
+from app.models import User 
 import os
 
 app = create_app()
-# AJOUTEZ TEMPORAIRE
-# 2. Automatisation pour le Plan Free de Render
-with app.app_context():
-    # Crée les tables dans la base PostgreSQL de Render si elles n'existent pas
-    db.create_all()
-    print("Base de données initialisée (Tables créées).")
 
-    # Création automatique du compte admin pour le premier test
-    if not User.query.filter_by(username="admin").first():
-        admin = User(
-            username="admin",
-            email="admin@ryvixlab.com",
-            role="administrateur",
-            actif=True
-        )
-        # Assurez-vous que votre modèle User a bien la méthode set_password
-        admin.set_password("@admin12345")
+# AJOUTEZ TEMPORAIREmnt
+# Le bloc qui crée les tables au démarrage
+with app.app_context():
+    try:
+        db.create_all()
+        print(" Base de données initialisée avec succès.")
         
-        db.session.add(admin)
-        db.session.commit()
-        print(" Compte administrateur créé par défaut.")
-    else:
-        print(" Le compte admin existe déjà, aucune action requise.")
+        # Logique de création de l'admin
+        if not User.query.filter_by(username="admin").first():
+            admin = User(
+                username="admin",
+                email="admin@ryvixlab.com",
+                role="administrateur",
+                actif=True
+            )
+            admin.set_password("@admin12345")
+            db.session.add(admin)
+            db.session.commit()
+            print(" Admin créé.")
+    except Exception as e:
+        print(f" Erreur lors de la création des tables : {e}")
 # FIN
 
 if __name__ == '__main__':
