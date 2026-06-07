@@ -53,19 +53,6 @@ def create_app(config_name=None):
     
     # ===== COMMANDES CLI PERSONNALISÉES =====
     register_cli_commands(app)
-
-     # A a retirer apres test
-    with app.app_context():
-        from app.models import User
-        db.create_all()  # Crée les tables si elles n'existent pas
-        
-        # Optionnel : Créer l'admin si absent
-        if not User.query.filter_by(username="admin").first():
-            admin = User(username="admin", email="admin@test.com", role="administrateur", actif=True)
-            admin.set_password("@admin12345")
-            db.session.add(admin)
-            db.session.commit()
-    # Fin
     return app
 
 
