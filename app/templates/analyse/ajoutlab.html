@@ -187,7 +187,7 @@
         
         {% if not analyses %}
             <div class="alert-warning">
-                ⚠️ Aucune analyse active. <a href="{{ url_for('analyse.ajout_analyse') }}">Créez d'abord une analyse</a>.
+                 Aucune analyse active. <a href="{{ url_for('analyse.ajout_analyse') }}">Créez d'abord une analyse</a>.
             </div>
         {% else %}
         
@@ -445,9 +445,9 @@
                 
                 <!-- Zone des valeurs prédéfinies (toujours visible maintenant) -->
                 <div class="zone-valeurs" style="margin-top: 20px;">
-                    <h4 id="mod_titre_zone">📊 Valeurs prédéfinies</h4>
+                    <h4 id="mod_titre_zone"> Valeurs prédéfinies</h4>
                     <p class="info-text" id="mod_desc_zone">
-                        💡 Optionnel pour Numérique/Texte. Obligatoire pour Liste de choix.
+                         Optionnel pour Numérique/Texte. Obligatoire pour Liste de choix.
                     </p>
                     
                     <div class="tags-container" id="mod_tags_container">
@@ -462,7 +462,7 @@
                     </div>
                     
                     <div id="mod_warning_liste" class="warning-liste" style="display: none;">
-                        ⚠️ Pour "Liste de choix", au moins <strong>2 valeurs</strong> sont obligatoires.
+                         Pour "Liste de choix", au moins <strong>2 valeurs</strong> sont obligatoires.
                     </div>
                 </div>
                 
@@ -489,8 +489,8 @@
     
     const SUGGESTIONS = {
         numerique: {
-            titre: '📊 Valeurs numériques fréquentes (optionnel)',
-            description: '💡 Ajoutez des nombres fréquents. Le laborantin pourra cliquer dessus OU taper une nouvelle valeur.',
+            titre: ' Valeurs numériques fréquentes (optionnel)',
+            description: ' Ajoutez des nombres fréquents. Le laborantin pourra cliquer dessus OU taper une nouvelle valeur.',
             placeholder: 'Tapez un nombre puis Entrée...',
             inputType: 'text',
             suggestions: [
@@ -500,8 +500,8 @@
             ]
         },
         texte: {
-            titre: '📝 Textes fréquents (optionnel)',
-            description: '💡 Ajoutez des textes fréquents. Le laborantin pourra cliquer dessus OU taper son propre texte.',
+            titre: ' Textes fréquents (optionnel)',
+            description: ' Ajoutez des textes fréquents. Le laborantin pourra cliquer dessus OU taper son propre texte.',
             placeholder: 'Tapez une valeur puis Entrée...',
             inputType: 'text',
             suggestions: [
@@ -511,8 +511,8 @@
             ]
         },
         liste: {
-            titre: '📋 Choix obligatoires',
-            description: '⚠️ Le laborantin DEVRA choisir parmi cette liste (impossible de taper autre chose). Minimum 2 valeurs.',
+            titre: ' Choix obligatoires',
+            description: ' Le laborantin DEVRA choisir parmi cette liste (impossible de taper autre chose). Minimum 2 valeurs.',
             placeholder: 'Tapez une valeur puis Entrée...',
             inputType: 'text',
             suggestions: [
@@ -590,7 +590,7 @@
             return;
         }
         
-        console.log(`🎨 Mise à jour zone (${isModal ? 'modal' : 'formulaire'}) -> ${typeValeur}`);
+        console.log(` Mise à jour zone (${isModal ? 'modal' : 'formulaire'}) -> ${typeValeur}`);
         
         // Mettre à jour le titre
         const titreEl = document.getElementById(prefix + 'titre_zone');
@@ -617,7 +617,7 @@
             if (config.suggestions && config.suggestions.length > 0) {
                 const label = document.createElement('span');
                 label.className = 'suggestions-label';
-                label.textContent = '⚡ Suggestions rapides :';
+                label.textContent = ' Suggestions rapides :';
                 sugZone.appendChild(label);
                 
                 config.suggestions.forEach(sug => {
@@ -683,7 +683,7 @@
     
     document.addEventListener('DOMContentLoaded', function() {
         
-        console.log('🚀 Script ajoutlab chargé');
+        console.log(' Script ajoutlab chargé');
         
         // ============ FORMULAIRE D'AJOUT ============
         const typeResultat = document.getElementById('type_resultat');
@@ -692,10 +692,10 @@
         const hiddenValeurs = document.getElementById('valeurs_predefinies');
         
         if (typeResultat) {
-            // ⭐ INITIALISER avec le type actuel
+            //  INITIALISER avec le type actuel
             mettreAJourZone(typeResultat.value);
             
-            // ⭐ ÉCOUTER LES CHANGEMENTS du select
+            //  ÉCOUTER LES CHANGEMENTS du select
             typeResultat.addEventListener('change', function() {
                 console.log('🔄 Changement de type:', this.value);
                 viderTags(tagsContainer, hiddenValeurs);
@@ -742,7 +742,7 @@
                 document.getElementById('mod-param-vm').value = this.dataset.vm || '';
                 document.getElementById('mod-param-type').value = this.dataset.type || 'numerique';
                 
-                // ⭐ Mettre à jour la zone selon le type
+                //  Mettre à jour la zone selon le type
                 mettreAJourZone(this.dataset.type || 'numerique', true);
                 
                 // Charger les tags existants
