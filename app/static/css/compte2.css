@@ -1,14 +1,13 @@
 /* Reprend les mêmes styles + ajustements pour compte2 */
 body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #47ce35 0%, #e0fbea 100%);
-    min-height: 100vh;
+    background: linear-gradient(135deg, #2ecc71 0%, #e0fbea 100%);
     margin: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 20px;
+    padding: 0px;
 }
 
 .sp {
