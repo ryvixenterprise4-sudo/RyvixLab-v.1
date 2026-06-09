@@ -267,7 +267,17 @@
                                     onsubmit="return confirm('Désactiver cette analyse ?');"
                                 >
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn-action btn-delete" title="Désactiver">🗑️</button>
+                                    <button type="submit" class="btn-action btn-delete" title="Désactiver">Désactiver</button>
+                                </form>
+                                 {% else %}
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('analyse.activer_analyse', analyse_id=analyse.id) }}"
+                                    style="display:inline"
+                                    onsubmit="return confirm('Activer cette analyse ?');"
+                                >
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn-action btn-activate" title="Activer">Activer</button>
                                 </form>
                                 <!-- Le bouton d'activation -->
                                 {% else %}

@@ -57,7 +57,6 @@ def create_app(config_name=None):
     
     # ===== COMMANDES CLI PERSONNALISÉES =====
     register_cli_commands(app)
-    
     return app
 
 
