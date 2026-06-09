@@ -82,6 +82,17 @@ def supprimer_analyse(analyse_id):
         flash('Analyse désactivée.', 'success')
     return redirect(url_for('analyse.ajout_analyse'))
 
+# activation d'une analyse désactivée
+@analyse_bp.route('/activer/<int:analyse_id>', methods=['POST'])
+@login_required
+@admin_required
+def activer_analyse(analyse_id):
+    succes, erreur = analyse_service.activer_analyse(analyse_id)
+    if erreur:
+        flash(erreur, 'danger')
+    else:
+        flash('Analyse activée.', 'success')
+    return redirect(url_for('analyse.ajout_analyse'))
 
 # ====================================================================
 # CONFIGURATION DES PARAMÈTRES - MIS À JOUR

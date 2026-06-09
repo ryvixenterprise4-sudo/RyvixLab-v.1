@@ -191,7 +191,9 @@ a .textBarre{
     border-radius: 5px;
     border-width: 1px;
     border-style: solid;
-    height: 30px;
+    height: auto;
+    padding: 8px 12px;
+    line-height: normal;
     align-content: center;
     align-items: center;
     margin: 0px 8px;
@@ -215,7 +217,7 @@ select {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: 15px;
     border-radius: 5px;
-    height: 30px;
+    height: auto;
     margin: 8px;
 }
 .sp-analyse{
@@ -267,17 +269,19 @@ option {
   border-top: 1px solid #ddd;
 }
 .conteneur-tableau {
-  max-height: 300px;
+  max-height: 500px;
   min-height: 200px;
   min-width: 600px;
   overflow-y: auto;
+  overflow-x: auto;
 }
 
 /* Astuce pour garder l'en-tête fixe pendant le défilement */
-.tableau-analyses thead {
+.tableau-analyses thead th {
   position: sticky;
   top: 0;
   background-color: white; /* Fond blanc pour cacher les lignes qui défilent en dessous */
+  z-index: 1; /* Assure que les en-têtes restent au-dessus des autres lignes */
 }
 tr:hover{
     cursor: pointer;
@@ -343,7 +347,7 @@ button:hover {
 @media screen and (max-width: 1024px) {
   
   body { /* Une couleur de fond différente pour tester */
-    font-size: 18px;           /* On agrandit un peu le texte pour le tactile */
+    font-size: 18px;           
   }
 .message-overlay {
     display: flex; 

@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Impression - RyvixLab{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/liste_examens.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="dvAnle">
+        <div class="barre">
+            <a href="{{ url_for('examen.enregistrement') }}">
+                <div class="textBarre">Enregistrement</div>
+            </a>
+            <a href="{{ url_for('resultat.liste') }}">
+                <div class="textBarre">Résultat</div>
+            </a>
+            <div class="textBarre1">Impression</div>
+        </div>
+    </div>
+    
+    <div class="GrandTitre">
+        <div class="Titre-Form">🖨️ Impression des Résultats</div>
+    </div>
+    
+    <div class="container">
+        
+        <!-- ===== FILTRES ===== -->
+        <h3>🔍 Filtres</h3>
+        
+        <form method="GET" action="{{ url_for('impression.liste') }}" class="form-filtres">
+            <div class="filtre-item">
+                <label>Recherche</label>
+                <div class="container-rech">
+                    <span class="icon-rech">🔍</span>
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ recherche }}"
+                        placeholder="N° examen, code, nom..."
+                        class="inp-rech"
+                    >
+                </div>
+            </div>
+            
+            <div class="filtre-item">
+                <label>Date</label>
+                <input
+                    type="date"
+                    name="date"
+                    value="{{ date_filtre }}"
+                    class="inp-nom"
+                >
+            </div>
+            
+            <div class="filtre-item">
+                <label>Statut</label>
+                <select name="statut" class="inp-nom">
+                    <option value="termine" {% if statut_filtre == 'termine' %}selected{% endif %}>
+                        ✅ Terminés
+                    </option>
+                    <option value="imprime" {% if statut_filtre == 'imprime' %}selected{% endif %}>
+                        🖨️ Déjà imprimés
+                    </option>
+                    <option value="all" {% if statut_filtre == 'all' %}selected{% endif %}>
+                        Tous
+                    </option>
+                </select>
+            </div>
+            
+            <div class="filtre-item filtre-bouton">
+                <button type="submit" class="btn-filtrer">Filtrer</button>
+                {% if recherche or date_filtre %}
+                    <a href="{{ url_for('impression.liste') }}" class="btn-clear">✕ Effacer</a>
+                {% endif %}
+            </div>
+        </form>
+        
+        <hr>
+        
+        <!-- ===== LISTE DES EXAMENS ===== -->
+        <h3>📋 Examens disponibles <span class="counter">({{ examens|length }})</span></h3>
+        
+        <div class="conteneur-tableau">
+            {% if examens %}
+            <table class="tableau-analyses">
+                <thead>
+                    <tr>
+                        <th>N° Examen</th>
+                        <th>Date</th>
+                        <th>Code patient</th>
+                        <th>Patient</th>
+                        <th>Nb analyses</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for examen in examens %}
+                    <tr>
+                        <td><strong>{{ examen.numero }}</strong></td>
+                        <td>{{ examen.date_examen.strftime('%d/%m/%Y') }}</td>
+                        <td><strong>{{ examen.patient.code }}</strong></td>
+                        <td>{{ examen.patient.nom_complet }}</td>
+                        <td>{{ examen.nombre_analyses }}</td>
+                        <td>
+                            {% if examen.statut == 'termine' %}
+                                <span class="badge-statut badge-termine">✅ Terminé</span>
+                            {% elif examen.statut == 'imprime' %}
+                                <span class="badge-statut badge-imprime">🖨️ Imprimé</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions-impression">
+                            
+                            <a    href="{{ url_for('impression.apercu', examen_id=examen.id) }}"
+                                target="_blank"
+                                class="btn-action-impression btn-apercu"
+                                title="Aperçu PDF"
+                            >
+                                 Aperçu
+                            </a>
+                            
+                            
+                            <a    href="{{ url_for('impression.telecharger', examen_id=examen.id) }}"
+                                class="btn-action-impression btn-telecharger"
+                                title="Télécharger PDF"
+                            >
+                                 Télécharger
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div style="font-size: 60px; margin-bottom: 15px;">📋</div>
+                <h4>Aucun examen prêt à imprimer</h4>
+                <p>Saisissez d'abord les résultats des examens dans la page Résultats.</p>
+                <p>
+                    <a href="{{ url_for('resultat.liste') }}" class="btn-link">
+                        → Aller à la saisie des résultats
+                    </a>
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

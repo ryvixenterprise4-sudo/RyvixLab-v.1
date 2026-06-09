@@ -42,6 +42,8 @@ def create_app(config_name=None):
     from app.routes.patient import patient_bp
     from app.routes.examen import examen_bp
     from app.routes.resultat import resultat_bp
+    from app.routes.laboratoire import laboratoire_bp
+    from app.routes.impression import impression_bp
 
     
     app.register_blueprint(patient_bp)
@@ -50,6 +52,8 @@ def create_app(config_name=None):
     app.register_blueprint(main_bp)
     app.register_blueprint(analyse_bp)
     app.register_blueprint(resultat_bp)
+    app.register_blueprint(laboratoire_bp)
+    app.register_blueprint(impression_bp)
     
     # ===== COMMANDES CLI PERSONNALISÉES =====
     register_cli_commands(app)

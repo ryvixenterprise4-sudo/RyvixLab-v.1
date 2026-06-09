@@ -25,7 +25,8 @@
             </div>
         </a>
         
-        <a href="#" onclick="alert('Page à venir'); return false;">
+         <!-- onglet impression -->
+        <a href="{{ url_for('impression.liste') }}">
             <div class="{{ 'textBarre1' if sub_active == 'impression' else 'textBarre' }}">
                 Impression
             </div>

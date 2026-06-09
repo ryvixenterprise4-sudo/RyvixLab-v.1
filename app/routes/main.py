@@ -85,13 +85,9 @@ def rech_patient():
     return redirect(url_for('patient.liste'))
 
 
-
-
 @main_bp.route('/paramettre')
 @login_required
 @admin_required
 def paramettre():
-    """Paramètres App (admin only)."""
-    return render_template('placeholder.html',
-                           titre='Paramètres',
-                           active_page='paramettre')
+    """Redirige vers la configuration du laboratoire."""
+    return redirect(url_for('laboratoire.configuration'))

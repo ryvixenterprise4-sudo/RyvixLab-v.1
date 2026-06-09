@@ -97,6 +97,15 @@ def supprimer_analyse(analyse_id):
     db.session.commit()
     return True, None
 
+# ==== Fonction pour reactiver une analyse desactivee =====
+def activer_analyse(analyse_id):
+    """Réactive une analyse désactivée."""
+    analyse = Analyse.query.get(analyse_id)
+    if not analyse:
+        return False, 'Analyse introuvable.'
+    analyse.actif = True
+    db.session.commit()
+    return True, None
 
 # ====================================================================
 # CRUD PARAMÈTRES - MIS À JOUR
