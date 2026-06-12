@@ -1,7 +1,9 @@
 /* ==================================================
    PAGE ACCUEIL - Spécifique aux 3 cartes
    ================================================== */
-
+.container-Bar{
+    overflow: hidden;
+}
 .container-acc {
     height: 60vh;
     display: grid;
@@ -87,6 +89,9 @@
     text-decoration: none;
     color: inherit;
 }
+
+/* Importer les styles communs */
+@import url('ajoutanalyse.css');
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
