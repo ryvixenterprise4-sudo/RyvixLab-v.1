@@ -17,14 +17,16 @@ a{
 .ligne-verticale {
   border-left: 1px solid var(--couleur-Back);
   height: 100%;
-  margin: 0 10px;
+  margin: 0 0px;
   position: fixed;
   left: 180;
   top: 0;
+  
 }
 .container-Bar{
     position: fixed;
     left: 5;
+    overflow: hidden;
 }
 .sp{
     margin-bottom: 0px;
