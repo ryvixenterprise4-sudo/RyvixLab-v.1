@@ -3,24 +3,27 @@
 /* Barre de filtres */
 .con-filtre {
     display: flex;
+    height: 60px;
     gap: 10px;
     align-items: center;
-    margin: 5px 0;
+    margin: 5px 0px;
     flex-wrap: wrap;
 }
 
 .select-filtre {
+    height: 40px;
     padding: 10px 14px;
     border: 1.5px solid #ddd;
     border-radius: 6px;
     font-size: 14px;
-    margin-bottom: 15px;
+    margin-bottom: 28px;
     background: white;
 }
 
 .btn-filtrer {
     padding: 10px 20px;
-    margin-top: 0px;
+    margin-bottom: 30px;
+    margin-top: 10px;
     background: #3498db;
     color: white;
     border: none;
@@ -99,7 +102,14 @@
 
 /* Surcharge pour les autres boutons (cohérence visuelle) */
 .actions .btn-action {
+    margin: 0;
     padding: 8px 10px;
-    border-radius: 6px;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     line-height: 1;
+    
 }
