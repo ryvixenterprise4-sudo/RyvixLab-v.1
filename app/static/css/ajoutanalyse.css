@@ -27,7 +27,7 @@ a{
     left: 5;
 }
 .sp{
-    margin-bottom: 25px;
+    margin-bottom: 0px;
 }
 .sp1{
     font-family:Verdana, Geneva, Tahoma, sans-serif;
@@ -46,7 +46,7 @@ a{
     font-weight:bold;
     margin: 10px 0px;
 }
-.mini-con{
+.mini-con{ 
     border-radius: 5px;
     height: 30px;
     width: 160px;
@@ -131,6 +131,7 @@ a .textBarre{
 .container-rech {
         position: relative;
         width: 250px;
+        height: 40px;
         margin-bottom: 20px;
     }
     .container-rech .inp-rech {
@@ -188,10 +189,13 @@ a .textBarre{
 }
 .inp-nom{
     width: 230px;
+    height: 40px;
     border-radius: 5px;
     border-width: 1px;
     border-style: solid;
-    height: 30px;
+    height: auto;
+    padding: 8px 12px;
+    line-height: normal;
     align-content: center;
     align-items: center;
     margin: 0px 8px;
@@ -215,7 +219,7 @@ select {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: 15px;
     border-radius: 5px;
-    height: 30px;
+    height: auto;
     margin: 8px;
 }
 .sp-analyse{
@@ -267,17 +271,19 @@ option {
   border-top: 1px solid #ddd;
 }
 .conteneur-tableau {
-  max-height: 300px;
+  max-height: 500px;
   min-height: 200px;
   min-width: 600px;
   overflow-y: auto;
+  overflow-x: auto;
 }
 
 /* Astuce pour garder l'en-tête fixe pendant le défilement */
-.tableau-analyses thead {
+.tableau-analyses thead th {
   position: sticky;
   top: 0;
   background-color: white; /* Fond blanc pour cacher les lignes qui défilent en dessous */
+  z-index: 1; /* Assure que les en-têtes restent au-dessus des autres lignes */
 }
 tr:hover{
     cursor: pointer;
@@ -343,7 +349,7 @@ button:hover {
 @media screen and (max-width: 1024px) {
   
   body { /* Une couleur de fond différente pour tester */
-    font-size: 18px;           /* On agrandit un peu le texte pour le tactile */
+    font-size: 18px;           
   }
 .message-overlay {
     display: flex; 
@@ -361,7 +367,7 @@ button:hover {
 /* ===== BARRE DE NAVIGATION SECONDAIRE ===== */
 .dvAnle {
     /* Position et dimensions */
-    margin-left: 80px;           /* Largeur exacte de la sidebar */
+    margin-left: 40px;           /* Largeur exacte de la sidebar */
     padding: 25px 40px 0 40px;
     background: #f5f7fa;
     
@@ -371,11 +377,13 @@ button:hover {
     
     /* Force la prise en compte des dimensions */
     box-sizing: border-box;
-    width: calc(100% - 240px);    /* Prend toute la largeur restante */
+    width: 100%;    /* Prend toute la largeur restante */
 }
 
 .barre {
     display: flex;
+    width: 500px;
+    margin-left: 40px;
     gap: 0;
     background: white;
     border-radius: 10px 10px 0 0;
@@ -484,6 +492,7 @@ button:hover {
 
 .inp-nom {
     width: 100%;
+    height: 40px;
     padding: 10px 12px;
     border: 1.5px solid #ddd;
     border-radius: 6px;
@@ -529,9 +538,8 @@ button:hover {
     display: flex;
     align-items: center;
     background: white;
-    border: 1.5px solid #ddd;
     border-radius: 6px;
-    padding: 0 12px;
+    padding: 0px 0px;
     max-width: 400px;
 }
 
@@ -543,6 +551,7 @@ button:hover {
 .inp-rech {
     flex: 1;
     border: none;
+    height: 40px;
     padding: 10px 0;
     font-size: 14px;
     outline: none;
@@ -550,6 +559,7 @@ button:hover {
 
 .btn-search {
     padding: 10px 20px;
+    margin-top: -20px;
     background: #3498db;
     color: white;
     border: none;
@@ -562,26 +572,38 @@ button:hover {
     background: #2980b9;
 }
 
+.form-filtres {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 15px 0;
+}
+
 .btn-clear {
     padding: 10px 15px;
-    background: #ecf0f1;
     color: #555;
     text-decoration: none;
+    margin-left: 5px;
     border-radius: 6px;
     font-size: 13px;
 }
 
 .btn-clear:hover {
     background: #dfe4e6;
+    transition: 0.5s;
 }
 
 /* ===== TABLEAU ===== */
 .container-liste-analyse {
-    margin-top: 20px;
-   
+    margin-top: 20;
+    min-width: 900px;
+    max-width: 100%;
 }
 
 .conteneur-tableau {
+    margin-top: 20;
+    min-width: 900px;
+    max-width: 100%;
     background: white;
     border-radius: 10px;
     overflow: hidden;
@@ -605,6 +627,7 @@ button:hover {
     font-weight: 600;
     color: #555;
     border-bottom: 2px solid #e0e0e0;
+    white-space: nowrap; 
 }
 
 .tableau-analyses td {
@@ -656,15 +679,20 @@ button:hover {
 /* ===== ACTIONS ===== */
 .actions {
     display: flex;
-    gap: 5px;
+    align-items: center;
+    gap: 6px;
 }
 
 .btn-action {
+    margin: 0;
+    padding: 8px 10px;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
     background: none;
     border: none;
     padding: 6px 10px;
     cursor: pointer;
-    border-radius: 4px;
     font-size: 16px;
     transition: background 0.2s;
 }
