@@ -150,3 +150,48 @@
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* ===== BOUTONS D'ACTIONS IMPRESSION ===== */
+.actions-impression {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.btn-action-impression {
+    padding: 7px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-apercu {
+    background: #3498db;
+    color: white;
+}
+
+.btn-apercu:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.btn-telecharger {
+    background: #2ecc71;
+    color: white;
+}
+
+.btn-telecharger:hover {
+    background: #27ae60;
+    transform: translateY(-1px);
+}
+
+.badge-imprime {
+    background: #e0e0e0;
+    color: #555;
+}

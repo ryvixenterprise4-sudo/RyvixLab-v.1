@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuration Laboratoire - RyvixLab{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/laboratoire.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="GrandTitre">
+        <div class="Titre-Form"> Configuration du Laboratoire</div>
+    </div>
+    
+    <div class="container">
+        
+        <div class="info-text">
+             Ces informations apparaîtront dans l'en-tête de chaque PDF de résultat.
+        </div>
+        
+        <form method="POST" action="{{ url_for('laboratoire.configuration') }}" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <!-- ===== IDENTITÉ ===== -->
+            <div class="section-config">
+                <h3> Identité du Laboratoire</h3>
+                
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Nom du laboratoire *</span>
+                        <input name="nom" type="text" class="inp-nom"
+                               value="{{ config.nom or '' }}" required>
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Slogan / Devise</span>
+                        <input name="slogan" type="text" class="inp-nom"
+                               value="{{ config.slogan or '' }}"
+                               placeholder="Ex: Au service de votre santé">
+                    </div>
+                </div>
+                
+                <!-- LOGO -->
+                <div style="margin-top: 15px;">
+                    <span class="sp-titre">Logo du laboratoire</span>
+                    <div class="upload-zone">
+                        {% if config.logo_path %}
+                            <div class="apercu-logo">
+                                <img src="{{ url_for('static', filename=config.logo_path) }}" alt="Logo actuel">
+                                <p><small>Logo actuel</small></p>
+                            </div>
+                        {% endif %}
+                        <input type="file" name="logo" accept="image/*" class="inp-fichier">
+                        <small class="texte-aide">PNG, JPG ou GIF (max 5 Mo)</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ===== COORDONNÉES ===== -->
+            <div class="section-config">
+                <h3> Coordonnées</h3>
+                
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Adresse</span>
+                        <input name="adresse" type="text" class="inp-nom"
+                               value="{{ config.adresse or '' }}"
+                               placeholder="Ex: Rue Oreste Zamor">
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Ville</span>
+                        <input name="ville" type="text" class="inp-nom"
+                               value="{{ config.ville or '' }}"
+                               placeholder="Ex: Hinche">
+                    </div>
+                </div>
+                
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Département</span>
+                        <input name="departement" type="text" class="inp-nom"
+                               value="{{ config.departement or '' }}"
+                               placeholder="Ex: Centre">
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Pays</span>
+                        <input name="pays" type="text" class="inp-nom"
+                               value="{{ config.pays or 'Haïti' }}">
+                    </div>
+                </div>
+                
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Téléphone principal</span>
+                        <input name="telephone1" type="text" class="inp-nom"
+                               value="{{ config.telephone1 or '' }}"
+                               placeholder="Ex: +509 1234 5678">
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Téléphone secondaire</span>
+                        <input name="telephone2" type="text" class="inp-nom"
+                               value="{{ config.telephone2 or '' }}">
+                    </div>
+                </div>
+                
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Email</span>
+                        <input name="email" type="email" class="inp-nom"
+                               value="{{ config.email or '' }}">
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Site web</span>
+                        <input name="site_web" type="text" class="inp-nom"
+                               value="{{ config.site_web or '' }}"
+                               placeholder="Ex: www.ryvixlab.com">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ===== DIRECTION ===== -->
+            <div class="section-config">
+                <h3> Direction</h3>
+                
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Nom du directeur</span>
+                        <input name="directeur_nom" type="text" class="inp-nom"
+                               value="{{ config.directeur_nom or '' }}"
+                               placeholder="Ex: Dr. Jean Pierre">
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Titre / Fonction</span>
+                        <input name="directeur_titre" type="text" class="inp-nom"
+                               value="{{ config.directeur_titre or '' }}"
+                               placeholder="Ex: Médecin Biologiste">
+                    </div>
+                </div>
+                
+                <!-- SIGNATURE -->
+                <div style="margin-top: 15px;">
+                    <span class="sp-titre">Image de signature</span>
+                    <div class="upload-zone">
+                        {% if config.directeur_signature_path %}
+                            <div class="apercu-logo">
+                                <img src="{{ url_for('static', filename=config.directeur_signature_path) }}" alt="Signature">
+                                <p><small>Signature actuelle</small></p>
+                            </div>
+                        {% endif %}
+                        <input type="file" name="signature" accept="image/*" class="inp-fichier">
+                        <small class="texte-aide">PNG (fond transparent recommandé)</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ===== INFORMATIONS LÉGALES ===== -->
+            <div class="section-config">
+                <h3> Informations légales</h3>
+                
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Numéro de licence</span>
+                        <input name="numero_licence" type="text" class="inp-nom"
+                               value="{{ config.numero_licence or '' }}">
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Numéro fiscal</span>
+                        <input name="numero_fiscal" type="text" class="inp-nom"
+                               value="{{ config.numero_fiscal or '' }}">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ===== PERSONNALISATION PDF ===== -->
+            <div class="section-config">
+                <h3>Personnalisation des PDFs</h3>
+                
+                <div class="mini-conpatien">
+                    <div class="flexpatient">
+                        <span class="sp-titre">Couleur principale (en-tête)</span>
+                        <input name="en_tete_couleur" type="color" class="inp-couleur"
+                               value="{{ config.en_tete_couleur or '#2c3e50' }}">
+                    </div>
+                    
+                    <div class="flexpatient">
+                        <span class="sp-titre">Devise (monnaie)</span>
+                        <input name="devise" type="text" class="inp-nom"
+                               value="{{ config.devise or 'HTG' }}"
+                               maxlength="10">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <span class="sp-titre">Texte du pied de page (optionnel)</span>
+                    <textarea name="pied_page" class="inp-nom" rows="2"
+                              placeholder="Ex: Merci de votre confiance. Tous droits réservés.">{{ config.pied_page or '' }}</textarea>
+                </div>
+            </div>
+            
+            <!-- ===== BOUTON DE SAUVEGARDE ===== -->
+            <div style="margin-top: 30px; margin-bottom: 30px;">
+                <button type="submit" class="btn-enregistrement btn-grand">
+                    Enregistrer 
+                </button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
