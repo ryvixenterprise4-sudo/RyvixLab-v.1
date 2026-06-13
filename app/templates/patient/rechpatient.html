@@ -118,7 +118,7 @@
     <div class="container">
         <h3>🔍 Recherche</h3>
         
-        <form method="GET" action="{{ url_for('patient.liste') }}" class="con-filtre">
+        <form method="GET" action="{{ url_for('patient.liste') }}" autoComplete="off" class="con-filtre">
             <div class="container-rech">
                 <span class="icon-rech">🔍</span>
                 <input
@@ -217,6 +217,7 @@
                                     method="POST"
                                     action="{{ url_for('patient.supprimer', patient_id=patient.id) }}"
                                     style="display:inline"
+                                    autoComplete="off"
                                     onsubmit="return confirm('⚠️ Supprimer ce patient et TOUS ses examens ?');"
                                 >
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
