@@ -264,21 +264,33 @@
                                     method="POST"
                                     action="{{ url_for('analyse.supprimer_analyse', analyse_id=analyse.id) }}"
                                     style="display:inline"
+                                    autoComplete="off"
                                     onsubmit="return confirm('Désactiver cette analyse ?');"
                                 >
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn-action btn-delete" title="Désactiver">Désactiver</button>
+                                        <button type="submit" class="btn-action btn-delete" title="Désactiver">
+                                        <img src="{{ url_for('static', filename='images/inactif_icone.png') }}" alt="" class="img-actif">
+                                    </button>
                                 </form>
-                                 {% else %}
+<!-- <<<<<<< HEAD -->
+                                <!-- Le bouton d'activation -->
+                                {% else %}
+
                                 <form
                                     method="POST"
                                     action="{{ url_for('analyse.activer_analyse', analyse_id=analyse.id) }}"
                                     style="display:inline"
+                                    autoComplete="off"
                                     onsubmit="return confirm('Activer cette analyse ?');"
                                 >
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn-action btn-activate" title="Activer">Activer</button>
+                                    <!-- <img class="img-actif" src="/app/static/images/actif_icone.png" alt=""> -->
+                                    <!-- <button type="submit" class="btn-action btn-activate" title="Activer">Activer</button> -->
+                                    <button type="submit" class="btn-action btn-delete" title="Activer">
+                                        <img src="{{ url_for('static', filename='images/actif_icone.png') }}" alt="" class="img-actif">
+                                    </button>
                                 </form>
+<!-- <<<<<<< HEAD -->
                                 {% endif %}
                             </td>
                         </tr>
