@@ -1,10 +1,10 @@
 """
 Service de génération PDF pour les résultats d'analyses.
-
-Utilise ReportLab pour créer des PDFs professionnels.
+Style inspiré des rapports médicaux professionnels (MedLab).
 """
 
 import os
+import re
 from io import BytesIO
 from datetime import datetime
 from decimal import Decimal
@@ -15,19 +15,30 @@ from reportlab.lib.units import cm, mm
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-    Image, PageBreak, KeepTogether
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle,
+    Image as RLImage,
+    PageBreak,
+    KeepTogether
 )
 from reportlab.pdfgen import canvas
 
 from flask import current_app
 
-from app.models import Examen, Patient, Laboratoire, Resultat, Parametre, ExamenDetail
+from app.models import (
+    Examen, Patient, Laboratoire, Resultat, Parametre, ExamenDetail
+)
 
 
 # ====================================================================
 # COULEURS ET STYLES
 # ====================================================================
+
+# Couleur verte du style médical (comme MedLab)
+COULEUR_BANDEAU = colors.HexColor('#7CBA6F')  # Vert pomme
 
 def hex_to_color(hex_str):
     """Convertit un code hex en couleur ReportLab."""
@@ -75,23 +86,16 @@ def obtenir_styles(couleur_principale):
         'titre_section': ParagraphStyle(
             'TitreSection',
             parent=styles['Heading2'],
-            fontSize=14,
+            fontSize=12,
             textColor=couleur_principale,
             alignment=TA_LEFT,
-            spaceAfter=10,
+            spaceAfter=8,
             fontName='Helvetica-Bold'
         ),
         'normal': ParagraphStyle(
             'NormalCustom',
             parent=styles['Normal'],
             fontSize=10,
-            textColor=colors.HexColor('#333333'),
-        ),
-        'gras': ParagraphStyle(
-            'Gras',
-            parent=styles['Normal'],
-            fontSize=10,
-            fontName='Helvetica-Bold',
             textColor=colors.HexColor('#333333'),
         ),
         'pied': ParagraphStyle(
@@ -101,50 +105,186 @@ def obtenir_styles(couleur_principale):
             textColor=colors.grey,
             alignment=TA_CENTER,
         ),
-        'analyse_nom': ParagraphStyle(
-            'AnalyseNom',
-            parent=styles['Heading3'],
-            fontSize=13,
-            textColor=colors.white,
-            alignment=TA_LEFT,
+        # Style "catégorie d'analyse" comme ***CHIMIE***
+        'categorie': ParagraphStyle(
+            'Categorie',
+            parent=styles['Normal'],
+            fontSize=11,
             fontName='Helvetica-Bold',
-            spaceAfter=0,
+            textColor=colors.HexColor('#000000'),
+            alignment=TA_LEFT,
+            spaceAfter=4,
+            spaceBefore=8,
+        ),
+        # Nom du paramètre (en colonne TEST)
+        'param_nom': ParagraphStyle(
+            'ParamNom',
+            parent=styles['Normal'],
+            fontSize=10,
+            textColor=colors.HexColor('#000000'),
+            fontName='Helvetica',
+        ),
+        # Valeur normale (résultat dans plage)
+        'valeur_normale': ParagraphStyle(
+            'ValeurNormale',
+            parent=styles['Normal'],
+            fontSize=10,
+            textColor=colors.HexColor('#000000'),
+            fontName='Helvetica-Bold',
+            alignment=TA_CENTER,
+        ),
+        # Valeur anormale (résultat hors plage)
+        'valeur_anormale': ParagraphStyle(
+            'ValeurAnormale',
+            parent=styles['Normal'],
+            fontSize=10,
+            textColor=colors.HexColor('#cc0000'),
+            fontName='Helvetica-Bold',
+            alignment=TA_CENTER,
+        ),
+        # Cellule centrée (unité, valeurs normales)
+        'cellule_centree': ParagraphStyle(
+            'CelluleCentree',
+            parent=styles['Normal'],
+            fontSize=9,
+            textColor=colors.HexColor('#333333'),
+            alignment=TA_CENTER,
         ),
     }
 
 
 # ====================================================================
-# CONSTRUCTION DE L'EN-TÊTE
+# DÉTECTION DE VALEURS ANORMALES
+# ====================================================================
+
+def parse_plage(plage_str):
+    """
+    Parse une plage de valeurs normales.
+    
+    Exemples :
+        '0.5-1.3'  → (0.5, 1.3)
+        '< 10'     → (None, 10)
+        '> 100'    → (100, None)
+        '7 - 18'   → (7, 18)
+    
+    Returns:
+        tuple (min, max) ou (None, None) si non parsable
+    """
+    if not plage_str:
+        return (None, None)
+    
+    plage_str = plage_str.strip()
+    
+    # < X ou ≤ X
+    match = re.match(r'^[<≤]\s*([\d.,]+)', plage_str)
+    if match:
+        try:
+            return (None, float(match.group(1).replace(',', '.')))
+        except ValueError:
+            pass
+    
+    # > X ou ≥ X
+    match = re.match(r'^[>≥]\s*([\d.,]+)', plage_str)
+    if match:
+        try:
+            return (float(match.group(1).replace(',', '.')), None)
+        except ValueError:
+            pass
+    
+    # X - Y ou X-Y
+    match = re.match(r'^([\d.,]+)\s*[-–]\s*([\d.,]+)', plage_str)
+    if match:
+        try:
+            return (
+                float(match.group(1).replace(',', '.')),
+                float(match.group(2).replace(',', '.'))
+            )
+        except ValueError:
+            pass
+    
+    return (None, None)
+
+
+def est_valeur_anormale(valeur, plage_normale):
+    """
+    Détermine si une valeur est en dehors de la plage normale.
+    
+    Returns:
+        True si anormal, False si normal ou indéterminable
+    """
+    if not valeur or not plage_normale:
+        return False
+    
+    # Pour les valeurs texte (Positif/Négatif, +/++, etc.)
+    if not est_numerique(valeur):
+        # Si la valeur normale est aussi du texte, on compare
+        valeur_lower = valeur.strip().lower()
+        plage_lower = plage_normale.strip().lower()
+        
+        # Cas spécifiques
+        if valeur_lower in ['positif', '+', '++', '+++', '++++', 'présent', 'anormal']:
+            return True
+        if valeur_lower in ['négatif', 'normal', 'absent', '-']:
+            return False
+        return False
+    
+    # Pour les valeurs numériques
+    try:
+        val = float(str(valeur).replace(',', '.'))
+    except (ValueError, TypeError):
+        return False
+    
+    min_v, max_v = parse_plage(plage_normale)
+    
+    if min_v is None and max_v is None:
+        return False  # Plage non parsable
+    
+    if min_v is not None and val < min_v:
+        return True
+    if max_v is not None and val > max_v:
+        return True
+    
+    return False
+
+
+def est_numerique(valeur):
+    """Vérifie si une valeur est numérique."""
+    if not valeur:
+        return False
+    try:
+        float(str(valeur).replace(',', '.'))
+        return True
+    except (ValueError, TypeError):
+        return False
+
+
+# ====================================================================
+# EN-TÊTE DU LABORATOIRE (inchangé)
 # ====================================================================
 
 def construire_entete(labo, styles):
     """Construit l'en-tête du laboratoire."""
     elements = []
     
-    # ===== LOGO (si disponible) =====
     if labo.logo_path:
         chemin_logo = os.path.join(
             current_app.static_folder, labo.logo_path
         )
         if os.path.exists(chemin_logo):
             try:
-                img = Image(chemin_logo, width=3*cm, height=3*cm, kind='proportional')
+                img = RLImage(chemin_logo, width=3*cm, height=3*cm, kind='proportional')
                 img.hAlign = 'CENTER'
                 elements.append(img)
                 elements.append(Spacer(1, 4))
             except Exception as e:
                 print(f'Erreur logo : {e}')
     
-    # ===== NOM DU LABORATOIRE =====
     elements.append(Paragraph(labo.nom or 'Laboratoire Médical', styles['titre_labo']))
     
-    # ===== SLOGAN =====
     if labo.slogan:
         elements.append(Paragraph(labo.slogan, styles['slogan']))
     
-    # ===== COORDONNÉES =====
     coordonnees = []
-    
     if labo.adresse:
         adresse_complete = labo.adresse
         if labo.ville:
@@ -155,17 +295,17 @@ def construire_entete(labo, styles):
     
     contacts = []
     if labo.telephone1:
-        contacts.append(f' {labo.telephone1}')
+        contacts.append(f'Tel: {labo.telephone1}')
     if labo.telephone2:
         contacts.append(labo.telephone2)
     if labo.email:
-        contacts.append(f'✉ {labo.email}')
+        contacts.append(f'Email: {labo.email}')
     
     if contacts:
         coordonnees.append(' | '.join(contacts))
     
     if labo.numero_licence:
-        coordonnees.append(f'Licence N° : {labo.numero_licence}')
+        coordonnees.append(f'Licence N°: {labo.numero_licence}')
     
     for ligne in coordonnees:
         elements.append(Paragraph(ligne, styles['adresse']))
@@ -176,185 +316,282 @@ def construire_entete(labo, styles):
 
 
 # ====================================================================
-# INFO PATIENT
+# INFOS PATIENT (style condensé)
 # ====================================================================
 
 def construire_infos_patient(examen, patient, styles, couleur):
-    """Tableau d'informations du patient."""
+    """Bandeau d'informations du patient style médical."""
     elements = []
     
-    # ===== TITRE "RÉSULTATS D'ANALYSES" avec fond coloré (méthode propre) =====
-    titre_data = [['RÉSULTATS D\'ANALYSES']]
-    titre_table = Table(titre_data, colWidths=[17*cm])
-    titre_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, -1), couleur),
-        ('TEXTCOLOR', (0, 0), (-1, -1), colors.white),
-        ('FONT', (0, 0), (-1, -1), 'Helvetica-Bold', 12),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('TOPPADDING', (0, 0), (-1, -1), 8),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-    ]))
-    elements.append(titre_table)
-    elements.append(Spacer(1, 8))
-    
-    # ===== TABLEAU INFOS PATIENT =====
-    date_examen = examen.date_examen.strftime('%d/%m/%Y') if examen.date_examen else '-'
+    date_examen = examen.date_examen.strftime('%d/%m/%Y %H:%M') if examen.date_examen else '-'
     date_naissance = patient.date_naissance.strftime('%d/%m/%Y') if patient.date_naissance else '-'
-    age = f'{patient.age} ans' if patient.age else '-'
-    sexe = 'Masculin' if patient.sexe == 'M' else ('Féminin' if patient.sexe == 'F' else '-')
+    age = f'{patient.age}' if patient.age else '-'
+    sexe = patient.sexe or '-'
     
-    data = [
-        ['N° Examen :', examen.numero, 'Date :', date_examen],
-        ['Patient :', patient.nom_complet, 'Code :', patient.code],
-        ['Né(e) le :', date_naissance, 'Âge :', age],
-        ['Sexe :', sexe, 'Téléphone :', patient.telephone or '-'],
+    # Ligne 1 : Code + Patient + Date naissance + Age/Sexe
+    ligne1 = [[
+        Paragraph(f'<b>ACCOUNT N°:</b> {patient.code}', styles['param_nom']),
+        Paragraph(f'<b>{patient.nom_complet}</b>', styles['param_nom']),
+        Paragraph(f'<b>NAISSANCE:</b> {date_naissance}', styles['param_nom']),
+        Paragraph(f'<b>AGE | SEXE:</b> {sexe}  {age}', styles['param_nom']),
+    ]]
+    
+    table1 = Table(ligne1, colWidths=[4*cm, 6*cm, 4*cm, 3*cm])
+    table1.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 4),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+    ]))
+    
+    elements.append(table1)
+    
+    # Ligne 2 : Numéro examen + Date examen
+    ligne2 = [[
+        Paragraph(f'<b>N° EXAMEN:</b> {examen.numero}', styles['param_nom']),
+        Paragraph(f'<b>DATE:</b> {date_examen}', styles['param_nom']),
+        Paragraph(f'<b>PAGE:</b> 1', styles['param_nom']),
+    ]]
+    
+    table2 = Table(ligne2, colWidths=[6*cm, 7*cm, 4*cm])
+    table2.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 4),
+        ('TOPPADDING', (0, 0), (-1, -1), 2),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    
+    elements.append(table2)
+    
+    return elements
+
+
+# ====================================================================
+# BANDEAU D'EN-TÊTE DU TABLEAU DE RÉSULTATS (style médical vert)
+# ====================================================================
+
+def construire_bandeau_colonnes(styles):
+    """
+    Bandeau vert qui sert d'en-tête au tableau de résultats.
+    Format : TEST | RÉSULTATS (NORMAL | ANORMAL) | UNITÉS | VALEURS NORMALES
+    """
+    # En-tête avec colonnes RÉSULTATS divisée en NORMAL/ANORMAL
+    header_data = [
+        # Ligne 1 : Titres principaux
+        ['TEST', 'RESULTATS', '', 'UNITES', 'VALEURS NORMALES'],
+        # Ligne 2 : Sous-titres (NORMAL | ANORMAL)
+        ['', 'NORMAL', 'ANORMAL', '', '']
     ]
     
-    if examen.medecin_prescripteur:
-        data.append(['Prescripteur :', examen.medecin_prescripteur, '', ''])
+    table = Table(
+        header_data,
+        colWidths=[5*cm, 3*cm, 3*cm, 2.5*cm, 3.5*cm]
+    )
     
-    table = Table(data, colWidths=[3*cm, 6*cm, 2.5*cm, 5.5*cm])
     table.setStyle(TableStyle([
-        ('FONT', (0, 0), (-1, -1), 'Helvetica', 9),
-        ('FONT', (0, 0), (0, -1), 'Helvetica-Bold', 9),
-        ('FONT', (2, 0), (2, -1), 'Helvetica-Bold', 9),
-        ('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor('#333333')),
+        # Fond vert sur toutes les cellules
+        ('BACKGROUND', (0, 0), (-1, -1), COULEUR_BANDEAU),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.white),
+        ('FONT', (0, 0), (-1, -1), 'Helvetica-Bold', 9),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f8f9fa')),
-        ('BOX', (0, 0), (-1, -1), 0.5, colors.HexColor('#dddddd')),
-        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.HexColor('#eeeeee')),
-        ('LEFTPADDING', (0, 0), (-1, -1), 8),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        
+        # Fusion : TEST sur 2 lignes
+        ('SPAN', (0, 0), (0, 1)),
+        # Fusion : UNITES sur 2 lignes
+        ('SPAN', (3, 0), (3, 1)),
+        # Fusion : VALEURS NORMALES sur 2 lignes
+        ('SPAN', (4, 0), (4, 1)),
+        # Fusion : RESULTATS sur 2 colonnes (ligne 1)
+        ('SPAN', (1, 0), (2, 0)),
+        
+        # Padding
         ('TOPPADDING', (0, 0), (-1, -1), 6),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        
+        # Bordures fines blanches entre les sections
+        ('LINEBEFORE', (1, 0), (1, -1), 0.5, colors.white),
+        ('LINEBEFORE', (3, 0), (3, -1), 0.5, colors.white),
+        ('LINEBEFORE', (4, 0), (4, -1), 0.5, colors.white),
+        ('LINEBEFORE', (2, 1), (2, 1), 0.5, colors.white),
     ]))
     
-    elements.append(table)
-    elements.append(Spacer(1, 15))
+    return table
+
+
+# ====================================================================
+# CONSTRUCTION DU CORPS DES RÉSULTATS (NOUVEAU STYLE)
+# ====================================================================
+
+def construire_corps_resultats(examen, patient, styles):
+    """
+    Construit le corps des résultats au style MedLab.
+    
+    Format pour chaque analyse :
+        ***NOM ANALYSE***
+        [Paramètre]  [Valeur Normal]  [Valeur Anormal]  [Unité]  [Plage normale]
+    """
+    elements = []
+    
+    # ===== BANDEAU D'EN-TÊTE DES COLONNES =====
+    elements.append(construire_bandeau_colonnes(styles))
+    
+    # ===== POUR CHAQUE ANALYSE =====
+    for detail in examen.details.all():
+        analyse = detail.analyse
+        
+        parametres = Parametre.query.filter_by(
+            analyse_id=analyse.id
+        ).order_by(Parametre.ordre).all()
+        
+        if not parametres:
+            continue
+        
+        # ----- Titre de la catégorie : ***NOM*** -----
+        titre_categorie = f'{analyse.nom.upper()}'
+        
+        # Tableau du titre (fond blanc, gras)
+        titre_data = [[Paragraph(titre_categorie, styles['categorie'])]]
+        titre_table = Table(titre_data, colWidths=[17*cm])
+        titre_table.setStyle(TableStyle([
+            ('LEFTPADDING', (0, 0), (-1, -1), 6),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        elements.append(titre_table)
+        
+        # ----- Tableau des paramètres -----
+        donnees_table = []
+        
+        for param in parametres:
+            resultat = Resultat.query.filter_by(
+                examen_detail_id=detail.id,
+                parametre_id=param.id
+            ).first()
+            
+            # Nom du paramètre
+            nom_param = param.nom_parametre
+            if param.sous_parametre:
+                nom_param += f' ({param.sous_parametre})'
+            
+            valeur = resultat.valeur if resultat and resultat.valeur else ''
+            unite = param.unite or ''
+            
+            # Déterminer la valeur normale selon le sexe
+            if patient.sexe == 'F' and param.valeur_normale_f:
+                plage_normale = param.valeur_normale_f
+            elif patient.sexe == 'M' and param.valeur_normale_m:
+                plage_normale = param.valeur_normale_m
+            elif param.valeur_normale_f and param.valeur_normale_m:
+                plage_normale = f'F: {param.valeur_normale_f} / H: {param.valeur_normale_m}'
+            else:
+                plage_normale = param.valeur_normale_f or param.valeur_normale_m or ''
+            
+            # Déterminer si la valeur est anormale
+            anormal = est_valeur_anormale(valeur, plage_normale)
+            
+            # Placer la valeur dans la colonne NORMAL ou ANORMAL
+            if anormal:
+                valeur_normale_col = ''
+                valeur_anormale_col = Paragraph(
+                    f'<b>{valeur}</b>', styles['valeur_anormale']
+                ) if valeur else ''
+            else:
+                valeur_normale_col = Paragraph(
+                    f'<b>{valeur}</b>', styles['valeur_normale']
+                ) if valeur else ''
+                valeur_anormale_col = ''
+            
+            # Ligne du tableau
+            donnees_table.append([
+                Paragraph(nom_param, styles['param_nom']),
+                valeur_normale_col,
+                valeur_anormale_col,
+                Paragraph(unite, styles['cellule_centree']),
+                Paragraph(plage_normale, styles['cellule_centree']),
+            ])
+        
+        # Créer le tableau
+        if donnees_table:
+            tbl_parametres = Table(
+                donnees_table,
+                colWidths=[5*cm, 3*cm, 3*cm, 2.5*cm, 3.5*cm]
+            )
+            
+            tbl_parametres.setStyle(TableStyle([
+                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ('LEFTPADDING', (0, 0), (-1, -1), 6),
+                ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+                ('TOPPADDING', (0, 0), (-1, -1), 4),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+                
+                # Pas de bordures (look propre comme MedLab)
+                # Sauf une ligne fine en bas de chaque ligne
+                ('LINEBELOW', (0, 0), (-1, -2), 0.25, colors.HexColor('#dddddd')),
+            ]))
+            
+            elements.append(tbl_parametres)
+        
+        # Espacement entre les analyses
+        elements.append(Spacer(1, 8))
     
     return elements
 
 
 # ====================================================================
-# TABLEAU DES RÉSULTATS PAR ANALYSE
+# PIED DE PAGE (inchangé, mais simplifié)
 # ====================================================================
 
-def construire_tableau_analyse(detail, patient, styles, couleur):
-    """Tableau des résultats pour UNE analyse."""
-    elements = []
-    
-    analyse = detail.analyse
-    
-    # En-tête de l'analyse (avec couleur)
-    titre_data = [[Paragraph(f'<b>{analyse.nom.upper()}</b>', styles['analyse_nom'])]]
-    titre_table = Table(titre_data, colWidths=[17*cm])
-    titre_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, -1), couleur),
-        ('LEFTPADDING', (0, 0), (-1, -1), 10),
-        ('TOPPADDING', (0, 0), (-1, -1), 8),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-    ]))
-    elements.append(titre_table)
-    
-    # Récupérer les paramètres et résultats
-    parametres = Parametre.query.filter_by(
-        analyse_id=analyse.id
-    ).order_by(Parametre.ordre).all()
-    
-    # En-têtes du tableau
-    data = [['Paramètre', 'Résultat', 'Unité', 'Valeurs normales']]
-    
-    # Lignes
-    for param in parametres:
-        resultat = Resultat.query.filter_by(
-            examen_detail_id=detail.id,
-            parametre_id=param.id
-        ).first()
-        
-        nom_param = param.nom_parametre
-        if param.sous_parametre:
-            nom_param += f' ({param.sous_parametre})'
-        
-        valeur = resultat.valeur if resultat and resultat.valeur else '—'
-        unite = param.unite or '-'
-        
-        # Valeur normale selon le sexe
-        if patient.sexe == 'F' and param.valeur_normale_f:
-            normale = param.valeur_normale_f
-        elif patient.sexe == 'M' and param.valeur_normale_m:
-            normale = param.valeur_normale_m
-        elif param.valeur_normale_f and param.valeur_normale_m:
-            normale = f'F: {param.valeur_normale_f}\nH: {param.valeur_normale_m}'
-        else:
-            normale = param.valeur_normale_f or param.valeur_normale_m or '-'
-        
-        data.append([nom_param, valeur, unite, normale])
-    
-    if len(data) == 1:  # Pas de paramètre
-        data.append(['Aucun paramètre configuré', '-', '-', '-'])
-    
-    # Tableau
-    table = Table(data, colWidths=[5.5*cm, 4*cm, 2.5*cm, 5*cm])
-    
-    style_table = [
-        # En-tête
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#f0f0f0')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor('#333333')),
-        ('FONT', (0, 0), (-1, 0), 'Helvetica-Bold', 9),
-        ('ALIGN', (0, 0), (-1, 0), 'LEFT'),
-        
-        # Corps
-        ('FONT', (0, 1), (-1, -1), 'Helvetica', 9),
-        ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor('#333333')),
-        ('FONT', (1, 1), (1, -1), 'Helvetica-Bold', 10),  # Résultat en gras
-        ('TEXTCOLOR', (1, 1), (1, -1), couleur),  # Résultat en couleur
-        
-        # Bordures et padding
-        ('GRID', (0, 0), (-1, -1), 0.25, colors.HexColor('#dddddd')),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('LEFTPADDING', (0, 0), (-1, -1), 8),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
-        ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-        
-        # Alternance de couleurs
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#fafafa')]),
-    ]
-    
-    table.setStyle(TableStyle(style_table))
-    elements.append(table)
-    elements.append(Spacer(1, 12))
-    
-    return elements
-
-
-# ====================================================================
-# PIED DE PAGE
-# ====================================================================
-
-def construire_pied_page(labo, styles, couleur):
-    """Pied de page avec signature et infos légales."""
+def construire_pied_page(examen, labo, styles):
+    """Pied de page avec signature et infos."""
     elements = []
     
     elements.append(Spacer(1, 15))
+    
+    # Ligne de séparation
+    sep = Table([[''], ['']], colWidths=[17*cm], rowHeights=[0.5, 5])
+    sep.setStyle(TableStyle([
+        ('LINEABOVE', (0, 0), (-1, 0), 1, COULEUR_BANDEAU),
+    ]))
+    elements.append(sep)
+    
+    # Infos prélèvement
+    date_prelev = examen.date_examen.strftime('%d/%m/%Y %H:%M') if examen.date_examen else '-'
+    
+    infos = []
+    if examen.medecin_prescripteur:
+        infos.append(Paragraph(
+            f'<b>Prélevé par :</b> {examen.medecin_prescripteur}',
+            styles['normal']
+        ))
+    infos.append(Paragraph(
+        f'<b>Date Prélèvement :</b> {date_prelev}',
+        styles['normal']
+    ))
+    
+    for info in infos:
+        elements.append(info)
+        elements.append(Spacer(1, 2))
+    
+    elements.append(Spacer(1, 20))
     
     # ===== SIGNATURE DU DIRECTEUR =====
     if labo.directeur_nom or labo.directeur_signature_path:
         data_signature = []
         
-        # Si signature image
         if labo.directeur_signature_path:
             chemin_sig = os.path.join(
                 current_app.static_folder, labo.directeur_signature_path
             )
             if os.path.exists(chemin_sig):
                 try:
-                    img_sig = Image(chemin_sig, width=4*cm, height=1.5*cm, kind='proportional')
+                    img_sig = RLImage(chemin_sig, width=4*cm, height=1.5*cm, kind='proportional')
                     data_signature.append([img_sig])
-                except:
-                    pass
+                except Exception as e:
+                    print(f'Erreur signature : {e}')
         
-        # Nom et titre du directeur
         if labo.directeur_nom:
             data_signature.append([Paragraph(
                 f'<b>{labo.directeur_nom}</b>',
@@ -368,22 +605,10 @@ def construire_pied_page(labo, styles, couleur):
             )])
         
         if data_signature:
-            # Tableau aligné à droite
-            tbl = Table(
-                [[''] + [data_signature]],
-                colWidths=[10*cm, 7*cm]
-            )
-            tbl.setStyle(TableStyle([
-                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                ('ALIGN', (1, 0), (1, 0), 'CENTER'),
-            ]))
-            # Simplifié : juste à droite
             sig_table = Table(data_signature, colWidths=[7*cm])
             sig_table.setStyle(TableStyle([
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                ('TOPPADDING', (0, 0), (-1, -1), 2),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
             ]))
             
             wrapper = Table([['', sig_table]], colWidths=[10*cm, 7*cm])
@@ -394,13 +619,11 @@ def construire_pied_page(labo, styles, couleur):
     
     elements.append(Spacer(1, 15))
     
-    # ===== TEXTE DE PIED DE PAGE =====
     if labo.pied_page:
         elements.append(Paragraph(labo.pied_page, styles['pied']))
     
-    # Mention résultats
     elements.append(Paragraph(
-        f'<i> le {datetime.now().strftime("%d/%m/%Y à %H:%M")}</i>',
+        f'<i>Fait le {datetime.now().strftime("%d/%m/%Y à %H:%M")} </i>',
         styles['pied']
     ))
     
@@ -412,17 +635,8 @@ def construire_pied_page(labo, styles, couleur):
 # ====================================================================
 
 def generer_pdf_examen(examen_id, sauvegarder=True):
-    """
-    Génère le PDF d'un examen.
+    """Génère le PDF d'un examen."""
     
-    Args:
-        examen_id (int): ID de l'examen
-        sauvegarder (bool): Sauvegarder sur disque ou retourner les bytes
-    
-    Returns:
-        tuple (bytes_pdf | chemin_fichier, message_erreur)
-    """
-    # Récupérer les données
     examen = Examen.query.get(examen_id)
     if not examen:
         return None, 'Examen introuvable.'
@@ -433,41 +647,34 @@ def generer_pdf_examen(examen_id, sauvegarder=True):
     couleur_principale = hex_to_color(labo.en_tete_couleur)
     styles = obtenir_styles(couleur_principale)
     
-    # Buffer en mémoire
     buffer = BytesIO()
     
-    # Création du document
     doc = SimpleDocTemplate(
         buffer,
         pagesize=A4,
         topMargin=1.5*cm,
         bottomMargin=1.5*cm,
-        leftMargin=2*cm,
-        rightMargin=2*cm,
-        title=f'Résultats - {patient.nom_complet}',
-        author=labo.nom,
+        leftMargin=1.5*cm,
+        rightMargin=1.5*cm,
+        title=f'Resultats - {patient.nom_complet}',
+        author=labo.nom or 'Laboratoire',
         subject=f'Examen {examen.numero}',
     )
     
-    # Construction des éléments
     elements = []
     
-    # En-tête
+    # 1. En-tête (logo + nom labo + coordonnées) — INCHANGÉ
     elements.extend(construire_entete(labo, styles))
     
-    # Infos patient
+    # 2. Infos patient (style condensé)
     elements.extend(construire_infos_patient(examen, patient, styles, couleur_principale))
     
-    # Tableaux des résultats par analyse
-    elements.append(Paragraph('Résultats détaillés', styles['titre_section']))
+    # 3. CORPS DES RÉSULTATS (NOUVEAU STYLE)
+    elements.extend(construire_corps_resultats(examen, patient, styles))
     
-    for detail in examen.details.all():
-        elements.extend(construire_tableau_analyse(detail, patient, styles, couleur_principale))
+    # 4. Pied de page (avec signature) — INCHANGÉ
+    elements.extend(construire_pied_page(examen, labo, styles))
     
-    # Pied de page
-    elements.extend(construire_pied_page(labo, styles, couleur_principale))
-    
-    # Générer le PDF
     try:
         doc.build(elements)
     except Exception as e:
@@ -476,12 +683,10 @@ def generer_pdf_examen(examen_id, sauvegarder=True):
     pdf_bytes = buffer.getvalue()
     buffer.close()
     
-    # ===== SAUVEGARDE SUR DISQUE (optionnel) =====
     if sauvegarder:
         dossier_pdf = current_app.config.get('PDF_OUTPUT_FOLDER')
         os.makedirs(dossier_pdf, exist_ok=True)
         
-        # Nom du fichier
         nom_fichier = f'{examen.numero}_{patient.nom_complet.replace(" ", "_")}.pdf'
         nom_fichier = ''.join(c for c in nom_fichier if c.isalnum() or c in '._-')
         
@@ -490,7 +695,6 @@ def generer_pdf_examen(examen_id, sauvegarder=True):
         with open(chemin_complet, 'wb') as f:
             f.write(pdf_bytes)
         
-        # Marquer l'examen comme imprimé
         from app.extensions import db
         examen.statut = 'imprime'
         db.session.commit()
