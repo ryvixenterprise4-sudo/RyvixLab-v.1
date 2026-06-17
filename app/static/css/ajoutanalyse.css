@@ -685,8 +685,16 @@ button:hover {
     gap: 6px;
 }
 
+.img-actif{
+    width: 35px;
+    height: 35px;
+}
+
 .btn-action {
     margin: 0;
+    display: flex;
+    align-items: center;
+    align-content: center;
     padding: 8px 10px;
     height: 40px;
     width: 40px;
@@ -700,7 +708,7 @@ button:hover {
 }
 
 .btn-action:hover {
-    background: #f0f0f0;
+    background: none;
 }
 
 .btn-edit:hover {
@@ -708,7 +716,7 @@ button:hover {
 }
 
 .btn-delete:hover {
-    background: #f8d7da;
+    background-color: none;
 }
 
 /* ===== EMPTY STATE ===== */
