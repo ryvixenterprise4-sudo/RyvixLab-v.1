@@ -36,6 +36,11 @@
     background: #2980b9;
 }
 
+.btn-clear{
+    margin-left: 5px;
+    margin-bottom: 0px;
+}
+
 /* Badges sexe a arranger en flex*/
 .badge-sexe-m,
 .badge-sexe-f {
