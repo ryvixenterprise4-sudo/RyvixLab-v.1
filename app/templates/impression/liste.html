@@ -8,17 +8,7 @@
 
 {% block content %}
 
-    <div class="dvAnle">
-        <div class="barre">
-            <a href="{{ url_for('examen.enregistrement') }}">
-                <div class="textBarre">Enregistrement</div>
-            </a>
-            <a href="{{ url_for('resultat.liste') }}">
-                <div class="textBarre">Résultat</div>
-            </a>
-            <div class="textBarre1">Impression</div>
-        </div>
-    </div>
+    {% include 'partials/nav_analyses.html' %}
     
     <div class="GrandTitre">
         <div class="Titre-Form">🖨️ Impression des Résultats</div>
