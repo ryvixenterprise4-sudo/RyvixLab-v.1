@@ -73,7 +73,7 @@
         </div>
         
         <!-- ===== FORMULAIRE DE SAISIE ===== -->
-        <form method="POST" action="{{ url_for('resultat.saisie', examen_id=donnees.examen.id) }}" id="form-saisie">
+        <form method="POST" action="{{ url_for('resultat.saisie', examen_id=donnees.examen.id) }}" autoComplete="off" id="form-saisie">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             
             {% for analyse_data in donnees.analyses_a_saisir %}

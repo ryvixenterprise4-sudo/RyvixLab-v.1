@@ -15,7 +15,7 @@
         {% include '_flash_messages.html' %}
         
         <div class="container">
-            <form method="POST" action="{{ url_for('auth.login') }}">
+            <form method="POST" action="{{ url_for('auth.login') }}" autoComplete="off" >
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
                 <div class="textconect">Connexion</div>

@@ -50,6 +50,7 @@
             id="form-enregistrement"
             method="POST"
             action="{{ url_for('examen.enregistrement') }}"
+            autocomplete="off"
         >
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="patient_id" id="patient_id" value="{{ patient_preselect.id if patient_preselect else '' }}">
@@ -87,7 +88,7 @@
             </div>
             
             <!-- Champs patient (nouveau) -->
-            <div id="formulaire-nouveau-patient" class="Container-info"
+            <div id="formulaire-nouveau-patient" autoComplete="off" class="Container-info"
                  {% if patient_preselect %}style="display: none;"{% endif %}>
                 <div class="mini-conpatien">
                     <div class="flexpatient">

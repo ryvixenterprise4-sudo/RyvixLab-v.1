@@ -30,7 +30,7 @@
         {% include '_flash_messages.html' %}
         
         <div class="container">
-            <form method="POST" action="{{ url_for('auth.register') }}">
+            <form method="POST" action="{{ url_for('auth.register') }}" autoComplete="off" >
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
                 <div class="textconect">Créer un compte</div>

@@ -585,7 +585,8 @@ button:hover {
     padding: 10px 15px;
     color: #555;
     text-decoration: none;
-    margin-left: 5px;
+    margin-bottom: 17px;
+    margin-left: 0px;
     border-radius: 6px;
     font-size: 13px;
 }
@@ -685,8 +686,16 @@ button:hover {
     gap: 6px;
 }
 
+.img-actif{
+    width: 35px;
+    height: 35px;
+}
+
 .btn-action {
     margin: 0;
+    display: flex;
+    align-items: center;
+    align-content: center;
     padding: 8px 10px;
     height: 40px;
     width: 40px;
@@ -700,7 +709,7 @@ button:hover {
 }
 
 .btn-action:hover {
-    background: #f0f0f0;
+    background: none;
 }
 
 .btn-edit:hover {
@@ -708,7 +717,7 @@ button:hover {
 }
 
 .btn-delete:hover {
-    background: #f8d7da;
+    background-color: none;
 }
 
 /* ===== EMPTY STATE ===== */
