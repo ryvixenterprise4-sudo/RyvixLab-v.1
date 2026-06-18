@@ -155,7 +155,7 @@
     <div class="container">
         <h3>Nouvelle Analyse</h3>
         
-        <form class="Container-info" method="POST" action="{{ url_for('analyse.ajout_analyse') }}">
+        <form class="Container-info" method="POST" autoComplete="off" action="{{ url_for('analyse.ajout_analyse') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             
             <div class="mini-conpatien">
