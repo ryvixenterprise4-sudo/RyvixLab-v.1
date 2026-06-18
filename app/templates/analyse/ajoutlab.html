@@ -193,7 +193,7 @@
         
        <h3>Nouveau Paramètre</h3>
         
-        <form class="Container-info" method="POST" action="{{ url_for('analyse.configuration') }}">
+        <form class="Container-info" autoComplete="off" method="POST" action="{{ url_for('analyse.configuration') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             
             <div class="mini-conpatien">
@@ -379,6 +379,7 @@
                                     method="POST"
                                     action="{{ url_for('analyse.supprimer_parametre', parametre_id=p.id) }}"
                                     style="display:inline"
+                                    autoComplete="off"
                                     onsubmit="return confirm('Supprimer ce paramètre ?');"
                                 >
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -405,7 +406,7 @@
         <div class="modal-content">
             <h3>✏️ Modifier le paramètre</h3>
             
-            <form id="formModifParam" method="POST">
+            <form id="formModifParam" autoComplete="off" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
                 <label>Nom du paramètre <span style="color:red">*</span></label>
