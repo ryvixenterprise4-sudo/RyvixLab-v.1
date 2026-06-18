@@ -119,16 +119,21 @@
         <h3>🔍 Recherche</h3>
         
         <form method="GET" action="{{ url_for('patient.liste') }}" autoComplete="off" class="con-filtre">
-            <div class="container-rech">
-                <span class="icon-rech">🔍</span>
-                <input
-                    type="text"
-                    name="q"
-                    value="{{ recherche }}"
-                    placeholder="Entrer le code, nom, ou téléphone..."
-                    class="inp-rech"
-                >
-            </div>
+                <div class="container-rech">
+                    <span class="icon-rech">🔍</span>
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ recherche }}"
+                        placeholder="Entrer le code, nom, ou téléphone..."
+                        class="inp-rech"
+                    >
+                    {% if recherche or sexe_filtre %}
+                        <a href="{{ url_for('patient.liste') }}" class="btn-clear">
+                            ✕ 
+                        </a>
+                    {% endif %}
+                </div>
             
             <select name="sexe" class="select-filtre">
                 <option value="" disabled selected>Tous les sexes</option>
@@ -140,11 +145,6 @@
                 Filtrer
             </button>
             
-            {% if recherche or sexe_filtre %}
-                <a href="{{ url_for('patient.liste') }}" class="btn-clear">
-                    ✕ Effacer
-                </a>
-            {% endif %}
         </form>
         
         <hr>
