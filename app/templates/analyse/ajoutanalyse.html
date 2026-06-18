@@ -202,7 +202,7 @@
         <hr>
         
         <!-- Barre de recherche -->
-        <form method="GET" action="{{ url_for('analyse.ajout_analyse') }}" class="form-recherche">
+        <form method="GET" action="{{ url_for('analyse.ajout_analyse') }}" autoComplete="off" class="form-recherche">
             <div class="container-rech">
                 <span class="icon-rech">🔍</span>
                 <input type="text" name="q" value="{{ recherche }}"
