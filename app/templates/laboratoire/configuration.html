@@ -18,7 +18,7 @@
              Ces informations apparaîtront dans l'en-tête de chaque PDF de résultat.
         </div>
         
-        <form method="POST" action="{{ url_for('laboratoire.configuration') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ url_for('laboratoire.configuration') }}" autoComplete="off" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             
             <!-- ===== IDENTITÉ ===== -->
