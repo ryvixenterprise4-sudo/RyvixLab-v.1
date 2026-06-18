@@ -58,8 +58,13 @@
     flex-wrap: wrap;
     margin: 15px 0;
 }
+.btn-filtrer{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
 .btn-clear{
-    margin-top: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
 .filtre-item {
