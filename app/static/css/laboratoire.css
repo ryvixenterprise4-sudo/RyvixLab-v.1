@@ -10,6 +10,10 @@
     border-left: 4px solid #2ecc71;
 }
 
+.info-text{
+    margin-bottom: 20px;
+}
+
 .section-config h3 {
     color: #2c3e50;
     margin: 0 0 20px 0;
@@ -75,8 +79,8 @@ textarea.inp-nom {
 
 /* ===== BOUTON GRAND ===== */
 .btn-grand {
-    width: 11%;
-    padding: 16px;
+    height: 40px;
+    width: 150px;
     font-size: 16px;
     font-weight: 700;
 }
