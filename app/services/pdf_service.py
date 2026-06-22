@@ -330,7 +330,7 @@ def construire_infos_patient(examen, patient, styles, couleur):
     
     # Ligne 1 : Code + Patient + Date naissance + Age/Sexe
     ligne1 = [[
-        Paragraph(f'<b>ACCOUNT N°:</b> {patient.code}', styles['param_nom']),
+        Paragraph(f'<b>N°:</b> {patient.code}', styles['param_nom']),
         Paragraph(f'<b>{patient.nom_complet}</b>', styles['param_nom']),
         Paragraph(f'<b>NAISSANCE:</b> {date_naissance}', styles['param_nom']),
         Paragraph(f'<b>AGE | SEXE:</b> {sexe}  {age}', styles['param_nom']),
