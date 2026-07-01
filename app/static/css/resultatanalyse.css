@@ -232,6 +232,27 @@ tr:hover{
 .conteneur-tableau:hover::-webkit-scrollbar-thumb {
     background: #20a8a1;
 }
+
+/* Largeur de la barre de défilement */
+.conteneur-tableau::-webkit-scrollbar{
+    width: 8px;
+    height: 12px;
+}
+
+/* Fond de la barre */
+.conteneur-tableau::-webkit-scrollbar-track {
+    background:var(--couleur-Back);
+    border-radius: 10px;
+}
+
+.conteneur-tableau::-webkit-scrollbar-thumb {
+    background:var(--couleur-text);
+    border-radius: 10px;
+}
+/* Curseur de défilement */
+.conteneur-tableau:hover::-webkit-scrollbar-thumb {
+    background: #20a8a1;
+}
 .conteneur-tableau1 {
   max-height: 200px;
   min-height: 200px;
