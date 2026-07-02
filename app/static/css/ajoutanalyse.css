@@ -609,9 +609,30 @@ button:hover {
     max-width: 100%;
     background: white;
     border-radius: 10px;
-    overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    max-height: 300px;
     overflow-x: auto;
+}
+
+/* Largeur de la barre de défilement */
+.conteneur-tableau::-webkit-scrollbar{
+    width: 8px;
+    height: 12px;
+}
+
+/* Fond de la barre */
+.conteneur-tableau::-webkit-scrollbar-track {
+    background:var(--couleur-Back);
+    border-radius: 10px;
+}
+
+.conteneur-tableau::-webkit-scrollbar-thumb {
+    background:var(--couleur-text);
+    border-radius: 10px;
+}
+/* Curseur de défilement */
+.conteneur-tableau:hover::-webkit-scrollbar-thumb {
+    background: #20a8a1;
 }
 
 .tableau-analyses {
