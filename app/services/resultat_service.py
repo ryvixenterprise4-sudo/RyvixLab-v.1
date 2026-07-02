@@ -113,10 +113,10 @@ def obtenir_examen_complet(examen_id):
 # SAUVEGARDE DES RÉSULTATS
 # ====================================================================
 
-def sauvegarder_resultats(examen_id, resultats_data, user_id=None):
+def sauvegarder_resultats(examen_id, resultats_data, user_id=None, preleve_par=None):
     """
     Sauvegarde plusieurs résultats en une transaction.
-    
+
     Args:
         examen_id (int): ID de l'examen
         resultats_data (list[dict]): Liste de :
@@ -127,14 +127,18 @@ def sauvegarder_resultats(examen_id, resultats_data, user_id=None):
                 'commentaire': "..."  (optionnel)
             }
         user_id (int): ID de l'utilisateur qui saisit
-    
+        preleve_par (str): Nom de la personne ayant prélevé/saisi les résultats
+
     Returns:
         tuple (nb_enregistres, message_erreur)
     """
     examen = Examen.query.get(examen_id)
     if not examen:
         return 0, 'Examen introuvable.'
-    
+
+    if preleve_par:
+        examen.preleve_par = preleve_par
+
     nb_enregistres = 0
     
     for data in resultats_data:

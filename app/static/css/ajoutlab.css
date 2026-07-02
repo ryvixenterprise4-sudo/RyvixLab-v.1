@@ -928,3 +928,34 @@ kbd {
     color: #95a5a6;
     font-size: 14px;
 }
+
+/* Grille pour les 3 valeurs normales (F / H / Enfant) */
+.valeurs-normales-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+}
+
+.inp-sex-3 {
+    width: 100%;
+    padding: 10px;
+    border: 1.5px solid #ddd;
+    border-radius: 6px;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.inp-sex-3:focus {
+    border-color: #2ecc71;
+    outline: none;
+}
+
+/* Modal : 3 colonnes pour valeurs normales */
+.modal-row-3 {
+    display: flex;
+    gap: 12px;
+}
+
+.modal-row-3 > div {
+    flex: 1;
+}

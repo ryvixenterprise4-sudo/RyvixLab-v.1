@@ -129,6 +129,7 @@ def configuration():
             unite=request.form.get('unite'),
             valeur_normale_f=request.form.get('valeur_normale_f'),
             valeur_normale_m=request.form.get('valeur_normale_m'),
+            valeur_normale_enfant=request.form.get('valeur_normale_enfant'),
             type_resultat=type_resultat,
             valeurs_predefinies=valeurs_predefinies
         )
@@ -172,6 +173,7 @@ def modifier_parametre(parametre_id):
         unite=request.form.get('unite'),
         valeur_normale_f=request.form.get('valeur_normale_f'),
         valeur_normale_m=request.form.get('valeur_normale_m'),
+        valeur_normale_enfant=request.form.get('valeur_normale_enfant'),
         type_resultat=type_resultat,
         valeurs_predefinies=valeurs_predefinies
     )
@@ -213,6 +215,7 @@ def api_parametres_analyse(analyse_id):
         'unite': p.unite,
         'valeur_normale_f': p.valeur_normale_f,
         'valeur_normale_m': p.valeur_normale_m,
+        'valeur_normale_enfant': p.valeur_normale_enfant,
         'type_resultat': p.type_resultat,
         'valeurs_predefinies': [v.valeur for v in p.valeurs_predefinies]
     } for p in parametres])

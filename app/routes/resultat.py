@@ -91,11 +91,14 @@ def saisie(examen_id):
                         'commentaire': commentaire
                     })
         
+        preleve_par = (request.form.get('preleve_par') or '').strip()
+
         # Sauvegarder
         nb, erreur = resultat_service.sauvegarder_resultats(
             examen_id=examen_id,
             resultats_data=resultats_data,
-            user_id=current_user.id
+            user_id=current_user.id,
+            preleve_par=preleve_par
         )
         
         if erreur:

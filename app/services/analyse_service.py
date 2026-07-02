@@ -125,17 +125,11 @@ def lister_parametres(analyse_id=None):
 
 def creer_parametre(analyse_id, nom_parametre, sous_parametre=None,
                     unite=None, valeur_normale_f=None, valeur_normale_m=None,
+                    valeur_normale_enfant=None,  # ⭐ NOUVEAU
                     type_resultat='numerique', valeurs_predefinies=None):
-    """
-    Crée un nouveau paramètre lié à une analyse.
-    
-    Args:
-        type_resultat: 'numerique', 'texte', ou 'liste'
-        valeurs_predefinies (list[str]): Liste optionnelle de valeurs.
-            - Pour 'numerique' et 'texte' : suggestions (cliquables)
-            - Pour 'liste' : choix obligatoires
-    """
-    
+
+    # Crée un nouveau paramètre lié à une analyse.
+        
     analyse = Analyse.query.get(analyse_id)
     if not analyse:
         return None, 'Analyse introuvable.'
@@ -148,18 +142,10 @@ def creer_parametre(analyse_id, nom_parametre, sous_parametre=None,
     if type_resultat not in ('numerique', 'texte', 'liste'):
         return None, 'Type de résultat invalide.'
     
-    # Si type='liste', les valeurs sont OBLIGATOIRES (au moins 2)
+    # Si type='liste', les valeurs sont obligatoires
     if type_resultat == 'liste':
         if not valeurs_predefinies or len(valeurs_predefinies) < 2:
-            return None, 'Pour "Liste de choix", fournissez au moins 2 valeurs.'
-    
-    # Si type='numerique', vérifier que les valeurs sont bien des nombres
-    if type_resultat == 'numerique' and valeurs_predefinies:
-        for v in valeurs_predefinies:
-            try:
-                float(str(v).replace(',', '.'))
-            except (ValueError, TypeError):
-                return None, f'La valeur "{v}" n\'est pas un nombre valide.'
+            return None, 'Veuillez fournir au moins 2 valeurs prédéfinies.'
     
     # Détermine l'ordre automatiquement
     dernier_ordre = db.session.query(
@@ -174,13 +160,14 @@ def creer_parametre(analyse_id, nom_parametre, sous_parametre=None,
         unite=unite.strip() if unite else None,
         valeur_normale_f=valeur_normale_f.strip() if valeur_normale_f else None,
         valeur_normale_m=valeur_normale_m.strip() if valeur_normale_m else None,
+        valeur_normale_enfant=valeur_normale_enfant.strip() if valeur_normale_enfant else None,  
         type_resultat=type_resultat,
         ordre=dernier_ordre + 1
     )
     db.session.add(parametre)
     db.session.flush()
     
-    # Ajout des valeurs prédéfinies (pour TOUS les types maintenant)
+    # Ajout des valeurs prédéfinies
     if valeurs_predefinies:
         for ordre, valeur in enumerate(valeurs_predefinies, start=1):
             valeur = str(valeur).strip()
@@ -198,6 +185,7 @@ def creer_parametre(analyse_id, nom_parametre, sous_parametre=None,
 
 def modifier_parametre(parametre_id, nom_parametre=None, sous_parametre=None,
                        unite=None, valeur_normale_f=None, valeur_normale_m=None,
+                       valeur_normale_enfant=None,  
                        type_resultat=None, valeurs_predefinies=None):
     """Modifie un paramètre existant et ses valeurs prédéfinies."""
     
@@ -223,30 +211,17 @@ def modifier_parametre(parametre_id, nom_parametre=None, sous_parametre=None,
     if valeur_normale_m is not None:
         parametre.valeur_normale_m = valeur_normale_m.strip() or None
     
+        if valeur_normale_enfant is not None:
+            parametre.valeur_normale_enfant = valeur_normale_enfant.strip() or None
+    
     if type_resultat is not None:
         if type_resultat not in ('numerique', 'texte', 'liste'):
             return None, 'Type de résultat invalide.'
         parametre.type_resultat = type_resultat
     
-    # Validation : si type='liste', au moins 2 valeurs requises
-    if parametre.type_resultat == 'liste':
-        if not valeurs_predefinies or len(valeurs_predefinies) < 2:
-            return None, 'Pour "Liste de choix", fournissez au moins 2 valeurs.'
-    
-    # Validation : si type='numerique', vérifier les nombres
-    if parametre.type_resultat == 'numerique' and valeurs_predefinies:
-        for v in valeurs_predefinies:
-            try:
-                float(str(v).replace(',', '.'))
-            except (ValueError, TypeError):
-                return None, f'La valeur "{v}" n\'est pas un nombre valide.'
-    
-    # Mise à jour des valeurs prédéfinies
+    # Mise à jour des valeurs prédéfinies (inchangé)
     if valeurs_predefinies is not None:
-        # Supprimer les anciennes
         ValeurPredefinie.query.filter_by(parametre_id=parametre.id).delete()
-        
-        # Ajouter les nouvelles
         for ordre, valeur in enumerate(valeurs_predefinies, start=1):
             valeur = str(valeur).strip()
             if valeur:

@@ -45,6 +45,9 @@ class Examen(db.Model):
     
     # Notes du laborantin
     notes = db.Column(db.Text)
+
+    # Nom de la personne ayant prélevé/saisi les résultats (affiché sur le PDF)
+    preleve_par = db.Column(db.String(150))
     
     # Audit
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))

@@ -182,14 +182,22 @@
                                                 <strong>F:</strong> {{ p.valeur_normale_f }}
                                             {% elif donnees.patient.sexe == 'M' %}
                                                 <strong>H:</strong> {{ p.valeur_normale_m }}
+                                            {% elif p.valeur_normale_enfant %}
+                                                <strong>Enfant:</strong> {{ p.valeur_normale_enfant }}
                                             {% else %}
                                                 F: {{ p.valeur_normale_f }}<br>
-                                                H: {{ p.valeur_normale_m }}
+                                                H: {{ p.valeur_normale_m }}<br>
+                                                {% if p.valeur_normale_enfant %}
+                                                    Enfant: {{ p.valeur_normale_enfant }}
+                                                {% endif %}
                                             {% endif %}
+                                            
                                         {% elif p.valeur_normale_f %}
                                             {{ p.valeur_normale_f }}
                                         {% elif p.valeur_normale_m %}
                                             {{ p.valeur_normale_m }}
+                                        {% elif p.valeur_normale_enfant %}
+                                            {{ p.valeur_normale_enfant }}
                                         {% else %}
                                             -
                                         {% endif %}
@@ -224,13 +232,27 @@
                 </div>
                 
             {% endfor %}
-            
+
+            <!-- ===== PRÉLEVÉ PAR ===== -->
+            <div class="zone-preleve-par">
+                <label for="preleve_par">Prélevé par :</label>
+                <input
+                    type="text"
+                    id="preleve_par"
+                    name="preleve_par"
+                    value="{{ donnees.examen.preleve_par or '' }}"
+                    class="inp-preleve-par"
+                    placeholder="Nom de la personne ayant prélevé/saisi les résultats"
+                    autocomplete="off"
+                >
+            </div>
+
             <!-- ===== BOUTONS D'ACTION ===== -->
             <div class="zone-actions">
                 <a href="{{ url_for('resultat.liste') }}" class="btn-retour">
                     ← Retour à la liste
                 </a>
-                
+
                 <button type="submit" class="btn-enregistrer-resultats">
                      Enregistrer les résultats
                 </button>

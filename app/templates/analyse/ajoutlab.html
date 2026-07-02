@@ -297,9 +297,13 @@
                 
                 <div class="flexpatient">
                     <span class="sp-titre">Valeurs Normales</span>
-                    <div>
-                        <input name="valeur_normale_f" placeholder="Femme" type="text" class="inp-sex">
-                        <input name="valeur_normale_m" placeholder="Homme" type="text" class="inp-sex">
+                    <div class="valeurs-normales-grid">
+                        <input name="valeur_normale_f" placeholder="Femme" 
+                               type="text" class="inp-sex-3">
+                        <input name="valeur_normale_m" placeholder="Homme" 
+                               type="text" class="inp-sex-3">
+                        <input name="valeur_normale_enfant" placeholder="Enfant" 
+                               type="text" class="inp-sex-3">
                     </div>
                 </div>
             </div>
@@ -317,7 +321,7 @@
         
         <!-- ===== LISTE DES PARAMÈTRES ===== -->
         <div class="container-liste-analyse">
-            <h4>Liste des Paramètres <span class="counter">({{ parametres|length }})</span></h4>
+           <h4>Liste des Paramètres <span class="counter">({{ parametres|length }})</span></h4>
             
             <div class="conteneur-tableau">
                 {% if parametres %}
@@ -330,6 +334,7 @@
                             <th>Unité</th>
                             <th>V. normale (F)</th>
                             <th>V. normale (H)</th>
+                            <th>V. normale (E)</th>
                             <th>Type</th>
                             <th>Valeurs</th>
                             <th>Actions</th>
@@ -344,6 +349,7 @@
                             <td>{{ p.unite or '-' }}</td>
                             <td>{{ p.valeur_normale_f or '-' }}</td>
                             <td>{{ p.valeur_normale_m or '-' }}</td>
+                            <td>{{ p.valeur_normale_enfant or '-' }}</td>
                             <td>
                                 <span class="badge badge-{{ p.type_resultat }}">
                                     {{ p.type_resultat }}
@@ -368,6 +374,7 @@
                                     data-unite="{{ p.unite or '' }}"
                                     data-vf="{{ p.valeur_normale_f or '' }}"
                                     data-vm="{{ p.valeur_normale_m or '' }}"
+                                    data-ve="{{ p.valeur_normale_enfant or '' }}"
                                     data-type="{{ p.type_resultat }}"
                                     data-valeurs="{{ p.valeurs_predefinies|map(attribute='valeur')|join('|') }}"
                                     title="Modifier"
@@ -433,18 +440,25 @@
                     </div>
                 </div>
                 
-                <div class="modal-row">
+                <div class="modal-row modal-row-3">
                     <div>
                         <label>Valeur normale (Femme)</label>
-                        <input type="text" name="valeur_normale_f" id="mod-param-vf" class="inp-nom">
+                        <input type="text" name="valeur_normale_f" 
+                               id="mod-param-vf" class="inp-nom">
                     </div>
                     <div>
                         <label>Valeur normale (Homme)</label>
-                        <input type="text" name="valeur_normale_m" id="mod-param-vm" class="inp-nom">
+                        <input type="text" name="valeur_normale_m" 
+                               id="mod-param-vm" class="inp-nom">
+                    </div>
+                    <div>
+                        <label>Valeur normale (Enfant)</label>
+                        <input type="text" name="valeur_normale_enfant" 
+                               id="mod-param-ve" class="inp-nom">
                     </div>
                 </div>
                 
-                <!-- Zone des valeurs prédéfinies (toujours visible maintenant) -->
+                <!-- Zone des valeurs normales predefinies-->
                 <div class="zone-valeurs" style="margin-top: 20px;">
                     <h4 id="mod_titre_zone"> Valeurs prédéfinies</h4>
                     <p class="info-text" id="mod_desc_zone">
@@ -741,6 +755,7 @@
                 document.getElementById('mod-param-unite').value = this.dataset.unite || '';
                 document.getElementById('mod-param-vf').value = this.dataset.vf || '';
                 document.getElementById('mod-param-vm').value = this.dataset.vm || '';
+                document.getElementById('mod-param-ve').value = this.dataset.ve || '';
                 document.getElementById('mod-param-type').value = this.dataset.type || 'numerique';
                 
                 //  Mettre à jour la zone selon le type
